@@ -82,12 +82,11 @@ type runner struct {
 func (r *runner) Log(tag string, msg ...string)    { r.log(tag, msg...) }
 func (r *runner) ChDir(path string)                { r.store.ChDir(path) }
 func (r *runner) Write(path string) io.WriteCloser { return r.store.Write(path) }
+func (r *runner) MkDir(path string)                { r.store.MkDir(path) }
 
 func (r *runner) ExecHandler(ctx context.Context, args []string) error {
-	fmt.Println("running", args[0])
 	b, ok := r.builtin[args[0]]
 	if !ok {
-		fmt.Println("no command found")
 		if r.permittedExec(args) {
 			return interp.DefaultExecHandler(2)(ctx, args)
 		}

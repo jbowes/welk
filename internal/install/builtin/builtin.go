@@ -10,6 +10,7 @@ type Host interface {
 
 	ChDir(path string)
 	Write(path string) io.WriteCloser
+	MkDir(path string)
 }
 
 type IOs struct {

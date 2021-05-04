@@ -13,7 +13,8 @@ type Store struct {
 }
 
 type file struct {
-	b bytes.Buffer
+	dir bool
+	b   bytes.Buffer
 }
 
 func (f *file) Write(p []byte) (int, error) { return f.b.Write(p) }
@@ -21,6 +22,18 @@ func (f *file) Close() error                { return nil }
 
 func (s *Store) ChDir(path string) {
 	s.dir = path
+}
+
+func (s *Store) MkDir(path string) {
+	if !filepath.IsAbs(path) {
+		path = filepath.Join(s.dir, path)
+	}
+
+	if s.files == nil {
+		s.files = make(map[string]file)
+	}
+
+	s.files[path] = file{dir: true}
 }
 
 func (s *Store) Write(name string) io.WriteCloser {

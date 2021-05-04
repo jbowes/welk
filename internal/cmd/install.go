@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/jbowes/sumdog/internal/install"
@@ -15,6 +16,8 @@ import (
 
 	"github.com/spf13/cobra"
 )
+
+var mu sync.Mutex // TODO: no global here.
 
 var installCmd = cobra.Command{
 	Use:     "install URL",
@@ -48,8 +51,11 @@ func init() {
 }
 
 func permittedExec(args []string) bool {
+	mu.Lock()
+	defer mu.Unlock()
+
 	c := confirm{
-		message: "Run " + strings.Join(args, " "),
+		message: "Run external command: " + strings.Join(args, " "),
 	}
 
 	if err := tea.NewProgram(&c).Start(); err != nil {
@@ -61,6 +67,8 @@ func permittedExec(args []string) bool {
 }
 
 func log(tag string, msg ...string) {
+	mu.Lock()
+	defer mu.Unlock()
 	fmt.Println(lipgloss.NewStyle().Foreground(lipgloss.Color("#FF9999")).Render(tag) + " " + strings.Join(msg, " "))
 }
 
