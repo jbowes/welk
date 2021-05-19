@@ -42,10 +42,11 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 		return true
 	})
 
+	s := &store.Store{}
 	run := &runner{
 		builtin:       builtin.Builtin,
-		store:         &store.Store{},
 		permittedExec: permittedExec,
+		store:         s,
 		log:           log,
 	}
 
@@ -62,6 +63,8 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 	}
 
 	err = int.Run(ctx, f)
+	s.Manifest()
+
 	if err != nil {
 		return err
 	}
@@ -83,6 +86,7 @@ func (r *runner) Log(tag string, msg ...string)    { r.log(tag, msg...) }
 func (r *runner) ChDir(path string)                { r.store.ChDir(path) }
 func (r *runner) Write(path string) io.WriteCloser { return r.store.Write(path) }
 func (r *runner) MkDir(path string)                { r.store.MkDir(path) }
+func (r *runner) Remove(path string)               { r.store.Remove(path) }
 
 func (r *runner) ExecHandler(ctx context.Context, args []string) error {
 	b, ok := r.builtin[args[0]]

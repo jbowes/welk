@@ -4,9 +4,10 @@ import (
 	"context"
 )
 
-func Mkdir(ctx context.Context, host Host, ios IOs, args []string) error {
-
+func Mv(ctx context.Context, host Host, ios IOs, args []string) error {
+	host.Log("mv", args[0], args[1])
+	// TODO: update store
 	return nil
 }
 
-func init() { Builtin["mkdir"] = Mkdir }
+func init() { Builtin["mv"] = Mv }

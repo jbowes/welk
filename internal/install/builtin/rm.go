@@ -7,19 +7,19 @@ import (
 	"github.com/spf13/pflag"
 )
 
-func Mkdir(ctx context.Context, host Host, ios IOs, args []string) error {
+func Rm(ctx context.Context, host Host, ios IOs, args []string) error {
 	fs := pflag.NewFlagSet("", pflag.ContinueOnError)
-	_ = fs.BoolP("", "p", true, "")
+	_ = fs.BoolP("", "r", true, "")
 	err := fs.Parse(args)
 	if err != nil {
 		fmt.Println(err)
 		return err
 	}
 
-	host.Log("mkdir", fs.Arg(0))
+	host.Log("rm", fs.Arg(0))
 
-	host.MkDir(fs.Arg(0))
+	host.Remove(fs.Arg(0))
 	return nil
 }
 
-func init() { Builtin["mkdir"] = Mkdir }
+func init() { Builtin["rm"] = Rm }

@@ -2,13 +2,12 @@ package builtin
 
 import (
 	"context"
-	"fmt"
 	"strings"
 )
 
 func Echo(ctx context.Context, host Host, ios IOs, args []string) error {
 
-	fmt.Println(ios.Out)
+	// TODO: can we tell when this is a pipe for command stuff? fmt.Println(ios.Out)
 
 	host.Log("echo", strings.Join(args, " "))
 

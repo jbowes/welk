@@ -2,6 +2,7 @@ package store
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"path/filepath"
 )
@@ -15,6 +16,13 @@ type Store struct {
 type file struct {
 	dir bool
 	b   bytes.Buffer
+}
+
+// XXX: temporary
+func (s *Store) Manifest() {
+	for f, _ := range s.files {
+		fmt.Println(f)
+	}
 }
 
 func (f *file) Write(p []byte) (int, error) { return f.b.Write(p) }
@@ -34,6 +42,19 @@ func (s *Store) MkDir(path string) {
 	}
 
 	s.files[path] = file{dir: true}
+}
+
+func (s *Store) Remove(path string) {
+	if !filepath.IsAbs(path) {
+		path = filepath.Join(s.dir, path)
+	}
+
+	if s.files == nil {
+		return
+	}
+
+	// TODO: recurse
+	delete(s.files, path)
 }
 
 func (s *Store) Write(name string) io.WriteCloser {
