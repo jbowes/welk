@@ -15,6 +15,7 @@ type Host interface {
 }
 
 type IOs struct {
+	In  io.Reader
 	Out io.Writer
 }
 

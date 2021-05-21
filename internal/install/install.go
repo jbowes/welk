@@ -6,8 +6,10 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/jbowes/sumdog/internal/install/builtin"
+	"github.com/jbowes/sumdog/internal/install/sham"
 	"github.com/jbowes/sumdog/internal/install/store"
 	"mvdan.cc/sh/v3/interp"
 	"mvdan.cc/sh/v3/syntax"
@@ -45,6 +47,7 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 	s := &store.Store{}
 	run := &runner{
 		builtin:       builtin.Builtin,
+		sham:          sham.Sham,
 		permittedExec: permittedExec,
 		store:         s,
 		log:           log,
@@ -76,6 +79,7 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 
 type runner struct {
 	builtin map[string]builtin.BuiltinFunc
+	sham    map[string]builtin.BuiltinFunc
 	store   *store.Store
 
 	permittedExec func(args []string) bool
@@ -91,15 +95,19 @@ func (r *runner) Remove(path string)               { r.store.Remove(path) }
 func (r *runner) ExecHandler(ctx context.Context, args []string) error {
 	b, ok := r.builtin[args[0]]
 	if !ok {
-		if r.permittedExec(args) {
-			return interp.DefaultExecHandler(2)(ctx, args)
-		}
+		shamcmd := strings.Join(args, " ")
+		b, ok = r.sham[shamcmd]
+		if !ok {
+			if r.permittedExec(args) {
+				return interp.DefaultExecHandler(2)(ctx, args)
+			}
 
-		return fmt.Errorf("unimplemented command: %s", args[0])
+			return fmt.Errorf("unimplemented command: %s", args[0])
+		}
 	}
 
 	hc := interp.HandlerCtx(ctx)
-	return b(ctx, r, builtin.IOs{Out: hc.Stdout}, args[1:])
+	return b(ctx, r, builtin.IOs{In: hc.Stdin, Out: hc.Stdout}, args[1:])
 }
 
 func (r *runner) OpenHandler(ctx context.Context, path string, flag int, perm os.FileMode) (io.ReadWriteCloser, error) {
