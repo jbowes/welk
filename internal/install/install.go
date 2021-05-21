@@ -88,6 +88,7 @@ type runner struct {
 
 func (r *runner) Log(tag string, msg ...string)    { r.log(tag, msg...) }
 func (r *runner) ChDir(path string)                { r.store.ChDir(path) }
+func (r *runner) File(path string) []byte          { return r.store.File(path) }
 func (r *runner) Write(path string) io.WriteCloser { return r.store.Write(path) }
 func (r *runner) MkDir(path string)                { r.store.MkDir(path) }
 func (r *runner) Remove(path string)               { r.store.Remove(path) }

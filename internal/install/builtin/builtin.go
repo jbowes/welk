@@ -8,6 +8,7 @@ import (
 type Host interface {
 	Log(tag string, message ...string)
 
+	File(path string) []byte
 	ChDir(path string)
 	Write(path string) io.WriteCloser
 	MkDir(path string)

@@ -1,7 +1,6 @@
 package store
 
 import (
-	"bytes"
 	"fmt"
 	"io"
 	"path/filepath"
@@ -10,12 +9,12 @@ import (
 type Store struct {
 	dir string // working directory
 
-	files map[string]file
+	files map[string]*file
 }
 
 type file struct {
 	dir bool
-	b   bytes.Buffer
+	b   []byte
 }
 
 // XXX: temporary
@@ -25,8 +24,11 @@ func (s *Store) Manifest() {
 	}
 }
 
-func (f *file) Write(p []byte) (int, error) { return f.b.Write(p) }
-func (f *file) Close() error                { return nil }
+func (f *file) Write(p []byte) (int, error) {
+	f.b = append(f.b, p...)
+	return len(p), nil
+}
+func (f *file) Close() error { return nil }
 
 func (s *Store) ChDir(path string) {
 	s.dir = path
@@ -38,10 +40,10 @@ func (s *Store) MkDir(path string) {
 	}
 
 	if s.files == nil {
-		s.files = make(map[string]file)
+		s.files = make(map[string]*file)
 	}
 
-	s.files[path] = file{dir: true}
+	s.files[path] = &file{dir: true}
 }
 
 func (s *Store) Remove(path string) {
@@ -57,17 +59,25 @@ func (s *Store) Remove(path string) {
 	delete(s.files, path)
 }
 
+// TODO: not a good enough return
+func (s *Store) File(path string) []byte {
+	if !filepath.IsAbs(path) {
+		path = filepath.Join(s.dir, path)
+	}
+
+	return s.files[path].b
+}
+
 func (s *Store) Write(name string) io.WriteCloser {
 	if !filepath.IsAbs(name) {
 		name = filepath.Join(s.dir, name)
 	}
 
 	if s.files == nil {
-		s.files = make(map[string]file)
+		s.files = make(map[string]*file)
 	}
 
-	s.files[name] = file{}
+	s.files[name] = &file{}
 
-	f := s.files[name]
-	return &f
+	return s.files[name]
 }
