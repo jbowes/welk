@@ -66,13 +66,12 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 	}
 
 	err = int.Run(ctx, f)
+	fmt.Println("Manifest")
 	s.Manifest()
 
 	if err != nil {
 		return err
 	}
-
-	syntax.NewPrinter().Print(os.Stdout, f)
 
 	return nil
 }

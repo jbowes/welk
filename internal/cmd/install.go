@@ -32,17 +32,6 @@ var installCmd = cobra.Command{
 			fmt.Println("error installing", err)
 			os.Exit(1)
 		}
-
-		prog, err := progress.NewModel(progress.WithScaledGradient("#FF7CCB", "#FDFF8C"))
-		if err != nil {
-			fmt.Println("Could not initialize progress model:", err)
-			os.Exit(1)
-		}
-
-		if err = tea.NewProgram(example{progress: prog}).Start(); err != nil {
-			fmt.Println("Oh no!", err)
-			os.Exit(1)
-		}
 	},
 }
 
