@@ -13,5 +13,5 @@ require (
 	github.com/spf13/pflag v1.0.5
 	golang.org/x/mod v0.1.0
 	golang.org/x/sys v0.0.0-20210514084401-e8d321eab015 // indirect
-	mvdan.cc/sh/v3 v3.2.4
+	mvdan.cc/sh/v3 v3.3.0
 )

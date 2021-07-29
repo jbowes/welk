@@ -9,7 +9,8 @@ import (
 
 func Rm(ctx context.Context, host Host, ios IOs, args []string) error {
 	fs := pflag.NewFlagSet("", pflag.ContinueOnError)
-	_ = fs.BoolP("", "r", true, "")
+	_ = fs.BoolP("r", "r", true, "")
+	_ = fs.BoolP("f", "f", true, "")
 	err := fs.Parse(args)
 	if err != nil {
 		fmt.Println(err)
