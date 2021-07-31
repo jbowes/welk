@@ -8,6 +8,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/jbowes/sumdog/internal/db"
 	"github.com/jbowes/sumdog/internal/install/builtin"
 	"github.com/jbowes/sumdog/internal/install/sham"
 	"github.com/jbowes/sumdog/internal/install/store"
@@ -71,14 +72,22 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 	}
 
 	err = int.Run(ctx, f)
-	fmt.Println("Manifest")
-	s.Manifest()
-
 	if err != nil {
 		return err
 	}
 
-	return nil
+	m := &db.Manifest{
+		URL: url,
+	}
+
+	db := db.DB{Root: "/Users/jbowes/.sumdog/installed"}
+	txn, err := db.Begin(m)
+	if err != nil {
+		return err
+	}
+	// TODO: defer rollback, once rollback is safe.
+
+	return txn.Commit()
 }
 
 type runner struct {

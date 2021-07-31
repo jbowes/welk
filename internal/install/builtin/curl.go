@@ -17,9 +17,9 @@ func Curl(ctx context.Context, host Host, ios IOs, args []string) error {
 	fs.BoolP("verbos", "v", false, "")   // ignore this one, too
 	fs.BoolP("location", "L", false, "") // Ignored, as go follows Location headers, but maybe it shoudln't be
 
-	rname := fs.BoolP("remote-name", "O", false, "") // TODO: use this to output the file
-	fs.BoolP("fail", "f", false, "")                 // TODO: use this to make non-success responses return errors
-	fs.StringSliceP("header", "H", nil, "")          // TODO: use this
+	rname := fs.BoolP("remote-name", "O", false, "")
+	fs.BoolP("fail", "f", false, "")        // TODO: use this to make non-success responses return errors
+	fs.StringSliceP("header", "H", nil, "") // TODO: use this
 	err := fs.Parse(args)
 	if err != nil {
 		fmt.Println(err)
