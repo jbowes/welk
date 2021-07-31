@@ -53,12 +53,12 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 		return true
 	})
 
-	s := &vfs.VFS{}
+	v := &vfs.VFS{}
 	run := &runner{
 		builtin:       builtin.Builtin,
 		sham:          sham.Sham,
 		permittedExec: permittedExec,
-		vfs:           s,
+		vfs:           v,
 		log:           log,
 	}
 
@@ -85,14 +85,22 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 		return err
 	}
 
-	fs := s.Manifest()
+	fs := v.Manifest()
 	for i := range fs {
-		fs[i] = strings.ReplaceAll(fs[i], homevar, "$HOME")
+		fs[i].Name = strings.ReplaceAll(fs[i].Name, homevar, "$HOME")
+	}
+
+	mfs := make([]*db.File, 0, len(fs))
+	for _, f := range fs {
+		mfs = append(mfs, &db.File{
+			Name: f.Name,
+			Dir:  f.Dir,
+		})
 	}
 
 	m := &db.Manifest{
 		URL:   url,
-		Files: fs,
+		Files: mfs,
 	}
 
 	db := db.DB{Root: filepath.Join(xdg.DataHome, "sumdog", "installed")}
@@ -102,7 +110,9 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 	}
 	defer txn.Rollback()
 
-	// TODO: write files
+	if err := fileSync(fs); err != nil {
+		return err
+	}
 
 	return txn.Commit()
 }

@@ -9,29 +9,19 @@ import (
 type VFS struct {
 	dir string // working directory
 
-	files map[string]*File
+	files map[string]*file
 }
 
-type File struct {
-	Dir bool
+type file struct {
+	dir bool
 	b   []byte
 }
 
-// XXX: temporary
-func (v *VFS) Manifest() []string {
-	var out []string
-	for f := range v.files {
-		out = append(out, f)
-	}
-
-	return out
-}
-
-func (f *File) Write(p []byte) (int, error) {
+func (f *file) Write(p []byte) (int, error) {
 	f.b = append(f.b, p...)
 	return len(p), nil
 }
-func (f *File) Close() error { return nil }
+func (f *file) Close() error { return nil }
 
 func (v *VFS) ChDir(path string) {
 	v.dir = path
@@ -43,10 +33,10 @@ func (v *VFS) MkDir(path string) {
 	}
 
 	if v.files == nil {
-		v.files = make(map[string]*File)
+		v.files = make(map[string]*file)
 	}
 
-	v.files[path] = &File{Dir: true}
+	v.files[path] = &file{dir: true}
 }
 
 func (v *VFS) Remove(path string) {
@@ -77,10 +67,10 @@ func (v *VFS) Write(name string) io.WriteCloser {
 	}
 
 	if v.files == nil {
-		v.files = make(map[string]*File)
+		v.files = make(map[string]*file)
 	}
 
-	v.files[name] = &File{}
+	v.files[name] = &file{}
 
 	return v.files[name]
 }
@@ -103,7 +93,7 @@ func (v *VFS) Move(from, to string) error {
 	delete(v.files, from)
 
 	t, ok := v.files[to]
-	if !ok || !t.Dir {
+	if !ok || !t.dir {
 		// TODO: check real FS.
 		v.files[to] = f
 	} else {
@@ -111,4 +101,23 @@ func (v *VFS) Move(from, to string) error {
 	}
 
 	return nil
+}
+
+// TODO: use stat info here
+type ManifestEntry struct {
+	Name string
+	Dir  bool
+
+	Data []byte
+}
+
+// XXX: temporary
+func (v *VFS) Manifest() []*ManifestEntry {
+
+	var out []*ManifestEntry
+	for n, f := range v.files {
+		out = append(out, &ManifestEntry{Name: n, Dir: f.dir, Data: f.b})
+	}
+
+	return out
 }

@@ -29,7 +29,14 @@ type Manifest struct {
 	URL string `yaml:"url"` // TODO: checksum
 	// TODO: secondary URLs + checksum
 
-	Files []string `yaml:"files"` // TODO: dir or not, mode, checksum
+	Files []*File `yaml:"files"`
+}
+
+type File struct {
+	Name string `yaml:"name"`
+	Dir  bool   `yaml:"dir,omitempty"`
+
+	// TODO: mode, checksum
 }
 
 type DB struct {
