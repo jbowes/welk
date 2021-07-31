@@ -6,6 +6,7 @@ import (
 
 func Mktemp(ctx context.Context, host Host, ios IOs, args []string) error {
 
+	// TODO: better (real) pattern
 	fname := "/temp/faketmp/...."
 	host.Log("mktemp", fname)
 

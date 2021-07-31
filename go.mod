@@ -3,6 +3,7 @@ module github.com/jbowes/sumdog
 go 1.15
 
 require (
+	github.com/adrg/xdg v0.3.3
 	github.com/benhoyt/goawk v1.7.0
 	github.com/charmbracelet/bubbles v0.8.0
 	github.com/charmbracelet/bubbletea v0.14.1

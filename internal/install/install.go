@@ -6,8 +6,10 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 
+	"github.com/adrg/xdg"
 	"github.com/google/uuid"
 	"github.com/jbowes/sumdog/internal/db"
 	"github.com/jbowes/sumdog/internal/install/builtin"
@@ -93,7 +95,7 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 		Files: fs,
 	}
 
-	db := db.DB{Root: "/Users/jbowes/.sumdog/installed"}
+	db := db.DB{Root: filepath.Join(xdg.DataHome, "sumdog", "installed")}
 	txn, err := db.Begin(m)
 	if err != nil {
 		return err
