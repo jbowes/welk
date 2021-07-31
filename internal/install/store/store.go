@@ -1,6 +1,7 @@
 package store
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"path/filepath"
@@ -80,4 +81,32 @@ func (s *Store) Write(name string) io.WriteCloser {
 	s.files[name] = &file{}
 
 	return s.files[name]
+}
+
+func (s *Store) Move(from, to string) error {
+	// TODO: recurse
+
+	if !filepath.IsAbs(from) {
+		from = filepath.Join(s.dir, from)
+	}
+	if !filepath.IsAbs(to) {
+		to = filepath.Join(s.dir, to)
+	}
+
+	f, ok := s.files[from]
+	if !ok {
+		return errors.New("file not found")
+	}
+
+	delete(s.files, from)
+
+	t, ok := s.files[to]
+	if !ok || !t.dir {
+		// TODO: check real FS.
+		s.files[to] = f
+	} else {
+		s.files[filepath.Join(to, filepath.Base(from))] = f
+	}
+
+	return nil
 }

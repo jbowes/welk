@@ -13,6 +13,7 @@ type Host interface {
 	Write(path string) io.WriteCloser
 	MkDir(path string)
 	Remove(path string)
+	Move(from, to string) error
 }
 
 type IOs struct {
