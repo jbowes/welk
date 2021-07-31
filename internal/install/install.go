@@ -103,8 +103,8 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 		Files: mfs,
 	}
 
-	db := db.DB{Root: filepath.Join(xdg.DataHome, "sumdog", "installed")}
-	txn, err := db.Begin(m)
+	d := db.DB{Root: filepath.Join(xdg.DataHome, "sumdog", "installed")}
+	txn, err := d.Begin(m)
 	if err != nil {
 		return err
 	}

@@ -93,3 +93,35 @@ func (t *Txn) writeManifest() error {
 	// base 32 hex encoding preserves alphabetic ordering
 	return ioutil.WriteFile(filepath.Join(t.db.Root, base32.HexEncoding.EncodeToString([]byte(t.m.URL))+".yaml"), d, 0600)
 }
+
+func (d *DB) List(fn func(m *Manifest) error) error {
+	des, err := os.ReadDir(d.Root)
+	if err != nil {
+		return err
+	}
+
+	for _, de := range des {
+		if de.IsDir() {
+			continue
+		}
+
+		if filepath.Ext(de.Name()) != ".yaml" {
+			continue
+		}
+
+		b, err := ioutil.ReadFile(filepath.Join(d.Root, de.Name()))
+		if err != nil {
+			return err
+		}
+
+		var m Manifest
+		if err := yaml.Unmarshal(b, &m); err != nil {
+			return err
+		}
+
+		if err := fn(&m); err != nil {
+			return err
+		}
+	}
+	return nil
+}
