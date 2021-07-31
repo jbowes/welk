@@ -13,7 +13,7 @@ type VFS struct {
 }
 
 type file struct {
-	dir bool
+	dir bool // TODO: could track -p here too, inferring other dirs created, helping with cleanup
 	b   []byte
 }
 

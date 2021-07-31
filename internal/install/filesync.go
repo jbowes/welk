@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"io"
 	"os"
+	"path/filepath"
 
+	"github.com/adrg/xdg"
 	"github.com/jbowes/sumdog/internal/install/vfs"
 )
 
@@ -22,6 +24,8 @@ func fileSync(fs []*vfs.ManifestEntry) error {
 
 			continue
 		}
+
+		// TODO: proper mode
 		f, err := os.OpenFile(name, os.O_WRONLY, 0700)
 		if err != nil {
 			return err
@@ -31,6 +35,21 @@ func fileSync(fs []*vfs.ManifestEntry) error {
 		if err != nil {
 			return err
 		}
+
+		// TODO: support windows
+		bin := filepath.Join(xdg.Home, ".local", "bin")
+
+		rel, err := filepath.Rel(bin, name)
+		if err != nil {
+			rel = name
+		}
+
+		if err := os.MkdirAll(bin, 0700); err != nil {
+			return err
+		}
+
+		// TODO: if exec only
+		return os.Symlink(rel, filepath.Join(bin, filepath.Base(name)))
 	}
 
 	return nil
