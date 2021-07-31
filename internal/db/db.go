@@ -1,7 +1,7 @@
 package db
 
 import (
-	"encoding/base64"
+	"encoding/base32"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -20,15 +20,16 @@ const (
 )
 
 type Manifest struct {
-	Name        string `yaml:"name"`
-	Description string `yaml:"description"`
+	// Serialized in this order.
+
+	Name        string        `yaml:"name,omitempty"`
+	Description string        `yaml:"description,omitempty"`
+	State       ManifestState `yaml:"state"`
 
 	URL string `yaml:"url"` // TODO: checksum
 	// TODO: secondary URLs + checksum
 
 	Files []string `yaml:"files"` // TODO: dir or not, mode, checksum
-
-	State ManifestState `yaml:"state"`
 }
 
 type DB struct {
@@ -82,5 +83,6 @@ func (t *Txn) writeManifest() error {
 		return err
 	}
 
-	return ioutil.WriteFile(filepath.Join(t.db.Root, base64.RawURLEncoding.EncodeToString([]byte(t.m.URL))+".yaml"), d, 0600)
+	// base 32 hex encoding preserves alphabetic ordering
+	return ioutil.WriteFile(filepath.Join(t.db.Root, base32.HexEncoding.EncodeToString([]byte(t.m.URL))+".yaml"), d, 0600)
 }

@@ -8,10 +8,11 @@ import (
 	"os"
 	"strings"
 
+	"github.com/google/uuid"
 	"github.com/jbowes/sumdog/internal/db"
 	"github.com/jbowes/sumdog/internal/install/builtin"
 	"github.com/jbowes/sumdog/internal/install/sham"
-	"github.com/jbowes/sumdog/internal/install/store"
+	"github.com/jbowes/sumdog/internal/install/vfs"
 	"mvdan.cc/sh/v3/expand"
 	"mvdan.cc/sh/v3/interp"
 	"mvdan.cc/sh/v3/syntax"
@@ -50,18 +51,24 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 		return true
 	})
 
-	s := &store.Store{}
+	s := &vfs.VFS{}
 	run := &runner{
 		builtin:       builtin.Builtin,
 		sham:          sham.Sham,
 		permittedExec: permittedExec,
-		store:         s,
+		vfs:           s,
 		log:           log,
 	}
 
+	homevarU, err := uuid.NewRandom()
+	if err != nil {
+		return err
+	}
+	homevar := homevarU.String()
+
 	int, err := interp.New(
 		// interp.Dir(/* what makes sense here? */),
-		interp.Env(expand.ListEnviron("HOME=SUMDOG_HOME")), // TODO: configurable inclusion list. make SUMDOG_HOME random value.
+		interp.Env(expand.ListEnviron(fmt.Sprintf("HOME=%s", homevar))), // TODO: configurable inclusion list.
 		interp.ExecHandler(run.ExecHandler),
 		interp.OpenHandler(run.OpenHandler),
 		// interp.Params(), /* passed in by user */
@@ -76,8 +83,14 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 		return err
 	}
 
+	fs := s.Manifest()
+	for i := range fs {
+		fs[i] = strings.ReplaceAll(fs[i], homevar, "$HOME")
+	}
+
 	m := &db.Manifest{
-		URL: url,
+		URL:   url,
+		Files: fs,
 	}
 
 	db := db.DB{Root: "/Users/jbowes/.sumdog/installed"}
@@ -95,19 +108,19 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 type runner struct {
 	builtin map[string]builtin.BuiltinFunc
 	sham    map[string]builtin.BuiltinFunc
-	store   *store.Store
+	vfs     *vfs.VFS
 
 	permittedExec func(args []string) bool
 	log           func(tag string, msg ...string)
 }
 
 func (r *runner) Log(tag string, msg ...string)    { r.log(tag, msg...) }
-func (r *runner) ChDir(path string)                { r.store.ChDir(path) }
-func (r *runner) File(path string) []byte          { return r.store.File(path) }
-func (r *runner) Write(path string) io.WriteCloser { return r.store.Write(path) }
-func (r *runner) MkDir(path string)                { r.store.MkDir(path) }
-func (r *runner) Remove(path string)               { r.store.Remove(path) }
-func (r *runner) Move(from, to string) error       { return r.store.Move(from, to) }
+func (r *runner) ChDir(path string)                { r.vfs.ChDir(path) }
+func (r *runner) File(path string) []byte          { return r.vfs.File(path) }
+func (r *runner) Write(path string) io.WriteCloser { return r.vfs.Write(path) }
+func (r *runner) MkDir(path string)                { r.vfs.MkDir(path) }
+func (r *runner) Remove(path string)               { r.vfs.Remove(path) }
+func (r *runner) Move(from, to string) error       { return r.vfs.Move(from, to) }
 
 func (r *runner) ExecHandler(ctx context.Context, args []string) error {
 	b, ok := r.builtin[args[0]]
