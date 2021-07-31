@@ -20,7 +20,7 @@ type file struct {
 
 // XXX: temporary
 func (s *Store) Manifest() {
-	for f, _ := range s.files {
+	for f := range s.files {
 		fmt.Println(f)
 	}
 }

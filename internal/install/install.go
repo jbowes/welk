@@ -11,6 +11,7 @@ import (
 	"github.com/jbowes/sumdog/internal/install/builtin"
 	"github.com/jbowes/sumdog/internal/install/sham"
 	"github.com/jbowes/sumdog/internal/install/store"
+	"mvdan.cc/sh/v3/expand"
 	"mvdan.cc/sh/v3/interp"
 	"mvdan.cc/sh/v3/syntax"
 )
@@ -59,7 +60,7 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 
 	int, err := interp.New(
 		// interp.Dir(/* what makes sense here? */),
-		interp.Env(nil), // TODO: configurable inclusion list
+		interp.Env(expand.ListEnviron("HOME=SUMDOG_HOME")), // TODO: configurable inclusion list. make SUMDOG_HOME random value.
 		interp.ExecHandler(run.ExecHandler),
 		interp.OpenHandler(run.OpenHandler),
 		// interp.Params(), /* passed in by user */
