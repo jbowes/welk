@@ -85,7 +85,9 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 	if err != nil {
 		return err
 	}
-	// TODO: defer rollback, once rollback is safe.
+	defer txn.Rollback()
+
+	// TODO: write files
 
 	return txn.Commit()
 }

@@ -41,7 +41,7 @@ func (db *DB) Begin(m *Manifest) (*Txn, error) {
 	}
 
 	m.State = PendingManifestState
-	t := &Txn{db, m}
+	t := &Txn{db: db, m: m}
 
 	if err := t.writeManifest(); err != nil {
 		return nil, err
@@ -51,11 +51,16 @@ func (db *DB) Begin(m *Manifest) (*Txn, error) {
 }
 
 type Txn struct {
-	db *DB
-	m  *Manifest
+	db   *DB
+	m    *Manifest
+	done bool
 }
 
 func (t *Txn) Rollback() error {
+	if t.done {
+		return nil
+	}
+
 	t.m.State = BrokenInstallManifestState
 	return t.writeManifest()
 
@@ -63,7 +68,12 @@ func (t *Txn) Rollback() error {
 
 func (t *Txn) Commit() error {
 	t.m.State = InstalledManifestState
-	return t.writeManifest()
+	err := t.writeManifest()
+	if err == nil {
+		t.done = true
+	}
+
+	return err
 }
 
 func (t *Txn) writeManifest() error {
