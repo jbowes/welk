@@ -138,8 +138,29 @@ func (r *runner) MkDir(path string)                { r.vfs.MkDir(path) }
 func (r *runner) Remove(path string)               { r.vfs.Remove(path) }
 func (r *runner) Move(from, to string) error       { return r.vfs.Move(from, to) }
 
+var paths = []string{
+	"/usr/bin",
+	"/usr/local/bin",
+}
+
 func (r *runner) ExecHandler(ctx context.Context, args []string) error {
-	b, ok := r.builtin[args[0]]
+	cmd := args[0]
+	if filepath.IsAbs(cmd) {
+		found := false
+		prefix := filepath.Dir(cmd)
+		for _, p := range paths {
+			if prefix == p {
+				found = true
+				break
+			}
+		}
+
+		if found {
+			cmd = filepath.Base(cmd)
+		}
+	}
+
+	b, ok := r.builtin[cmd]
 	if !ok {
 		shamcmd := strings.Join(args, " ")
 		b, ok = r.sham[shamcmd]
