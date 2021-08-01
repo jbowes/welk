@@ -15,7 +15,7 @@ func Uname(ctx context.Context, host Host, ios IOs, args []string) error {
 
 	host.Log("uname")
 
-	if args[0] == "-s" {
+	if len(args) == 0 || args[0] == "-s" {
 		output := unamed[runtime.GOOS]
 		_, err := fmt.Fprint(ios.Out, output)
 		return err

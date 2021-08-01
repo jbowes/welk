@@ -29,6 +29,8 @@ type Manifest struct {
 	URL string `yaml:"url"` // TODO: checksum
 	// TODO: secondary URLs + checksum
 
+	// TODO: include created symlinks
+
 	Files []*File `yaml:"files"`
 }
 
