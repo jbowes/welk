@@ -13,6 +13,7 @@ import (
 func Sed(ctx context.Context, host Host, ios IOs, args []string) error {
 	fs := pflag.NewFlagSet("", pflag.ContinueOnError)
 	quiet := fs.BoolP("", "n", false, "")
+	cmds := fs.StringArrayP("e", "e", nil, "")
 	err := fs.Parse(args)
 	if err != nil {
 		fmt.Println(err)
@@ -21,11 +22,18 @@ func Sed(ctx context.Context, host Host, ios IOs, args []string) error {
 
 	host.Log("sed")
 
+	var cmd string
+	if len(*cmds) == 0 {
+		cmd = strings.Join(fs.Args(), " ")
+	} else {
+		cmd = (*cmds)[0]
+	}
+
 	var eng *sed.Engine
 	if *quiet {
-		eng, err = sed.NewQuiet(strings.NewReader(strings.Join(fs.Args(), " ")))
+		eng, err = sed.NewQuiet(strings.NewReader(cmd))
 	} else {
-		eng, err = sed.New(strings.NewReader(strings.Join(fs.Args(), " ")))
+		eng, err = sed.New(strings.NewReader(cmd))
 	}
 
 	if err != nil {

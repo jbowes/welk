@@ -50,8 +50,15 @@ func Tr(ctx context.Context, host Host, ios IOs, args []string) error {
 	}
 
 	out := string(buf)
-	for k, v := range replace {
-		out = strings.ReplaceAll(out, k, v)
+
+	// TODO: hacky special case
+	if !*delete && s1 == "[:upper:]" && s2 == "[:lower:]" {
+		out = strings.ToLower(out)
+	} else {
+
+		for k, v := range replace {
+			out = strings.ReplaceAll(out, k, v)
+		}
 	}
 
 	_, err = ios.Out.Write([]byte(out))
