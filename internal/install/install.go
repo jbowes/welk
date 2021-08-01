@@ -13,6 +13,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jbowes/sumdog/internal/db"
 	"github.com/jbowes/sumdog/internal/install/builtin"
+	"github.com/jbowes/sumdog/internal/install/devnull"
 	"github.com/jbowes/sumdog/internal/install/sham"
 	"github.com/jbowes/sumdog/internal/install/vfs"
 	"mvdan.cc/sh/v3/expand"
@@ -41,6 +42,7 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 				x.Args[0].Parts[0].(*syntax.Lit).Value = "sumdog-echo"
 			}
 
+			// TODO: add printf impl
 			if len(x.Args) > 0 && x.Args[0].Lit() == "printf" {
 				x.Args[0].Parts[0].(*syntax.Lit).Value = "sumdog-printf"
 			}
@@ -68,13 +70,15 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 	}
 	homevar := homevarU.String()
 
+	dn := devnull.New()
+
 	int, err := interp.New(
 		// interp.Dir(/* what makes sense here? */),
 		interp.Env(expand.ListEnviron(fmt.Sprintf("HOME=%s", homevar))), // TODO: configurable inclusion list.
 		interp.ExecHandler(run.ExecHandler),
 		interp.OpenHandler(run.OpenHandler),
 		// interp.Params(), /* passed in by user */
-		// interp.StdIO(), // capture and log output and error
+		interp.StdIO(dn, dn, dn),
 	)
 	if err != nil {
 		return err
@@ -154,7 +158,7 @@ func (r *runner) ExecHandler(ctx context.Context, args []string) error {
 
 func (r *runner) OpenHandler(ctx context.Context, path string, flag int, perm os.FileMode) (io.ReadWriteCloser, error) {
 	if path == "/dev/null" {
-		return devNull{}, nil
+		return devnull.New(), nil
 	}
 
 	return nil, fmt.Errorf("shell file opening not implemented")
