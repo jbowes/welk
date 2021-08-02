@@ -24,18 +24,28 @@ func Curl(ctx context.Context, host Host, ios IOs, args []string) error {
 
 	outfmt := fs.StringP("write-out", "w", "", "")
 
-	fs.BoolP("fail", "f", false, "")        // TODO: use this to make non-success responses return errors
-	fs.StringSliceP("header", "H", nil, "") // TODO: use this
+	fs.BoolP("fail", "f", false, "") // TODO: use this to make non-success responses return errors
+	hdrs := fs.StringSliceP("header", "H", nil, "")
 
 	err := fs.Parse(args)
 	if err != nil {
-		fmt.Println(err)
 		return err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, fs.Arg(0), nil) // TODO: body?
+	if err != nil {
+		return err
+	}
+
+	for _, h := range *hdrs {
+		// TODO: better parsing
+		parts := strings.SplitN(h, ": ", 2)
+		req.Header.Add(parts[0], parts[1])
 	}
 
 	host.Log("curl", fs.Arg(0))
 
-	resp, err := http.Get(fs.Arg(0))
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return err
 	}
