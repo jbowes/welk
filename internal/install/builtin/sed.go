@@ -2,7 +2,6 @@ package builtin
 
 import (
 	"context"
-	"fmt"
 	"io"
 	"strings"
 
@@ -16,7 +15,6 @@ func Sed(ctx context.Context, host Host, ios IOs, args []string) error {
 	cmds := fs.StringArrayP("e", "e", nil, "")
 	err := fs.Parse(args)
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
 
