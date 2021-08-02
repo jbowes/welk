@@ -2,6 +2,7 @@ package install
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -26,9 +27,9 @@ func fileSync(fs []*vfs.ManifestEntry) error {
 		}
 
 		// TODO: proper mode
-		f, err := os.OpenFile(name, os.O_WRONLY, 0700)
+		f, err := os.OpenFile(name, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0700)
 		if err != nil {
-			return err
+			return fmt.Errorf("could not open file: %w", err)
 		}
 
 		_, err = io.Copy(f, bytes.NewReader(e.Data))

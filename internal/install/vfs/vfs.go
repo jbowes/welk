@@ -4,6 +4,8 @@ import (
 	"errors"
 	"io"
 	"path/filepath"
+	"sort"
+	"strings"
 )
 
 type VFS struct {
@@ -118,6 +120,10 @@ func (v *VFS) Manifest() []*ManifestEntry {
 	for n, f := range v.files {
 		out = append(out, &ManifestEntry{Name: n, Dir: f.dir, Data: f.b})
 	}
+
+	sort.Slice(out, func(i, j int) bool {
+		return strings.Compare(out[i].Name, out[j].Name) < 1
+	})
 
 	return out
 }

@@ -64,11 +64,12 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 		log:           log,
 	}
 
+	// TODO: windows
 	homevarU, err := uuid.NewRandom()
 	if err != nil {
 		return err
 	}
-	homevar := homevarU.String()
+	homevar := "/" + homevarU.String()
 
 	dn := devnull.New()
 
@@ -89,9 +90,12 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 		return err
 	}
 
+	fmt.Println("Preparing to install")
+
 	fs := v.Manifest()
 	for i := range fs {
 		fs[i].Name = strings.ReplaceAll(fs[i].Name, homevar, "$HOME")
+		fmt.Println(fs[i].Name)
 	}
 
 	mfs := make([]*db.File, 0, len(fs))
