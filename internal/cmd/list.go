@@ -12,7 +12,7 @@ import (
 var listCmd = cobra.Command{
 	Use:     "list packages",
 	Short:   "list installed and known curl | sh style packages",
-	Aliases: []string{"i"},
+	Aliases: []string{"l"},
 	Run: func(cmd *cobra.Command, args []string) {
 		d := db.DB{Root: filepath.Join(xdg.DataHome, "sumdog", "installed")}
 		err := d.List(func(m *db.Manifest) error {
