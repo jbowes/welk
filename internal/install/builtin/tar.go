@@ -53,6 +53,11 @@ func Tar(ctx context.Context, host Host, ios IOs, args []string) error {
 			return err
 		}
 
+		if hdr.Typeflag == tar.TypeDir {
+			host.MkDir(hdr.Name)
+			continue
+		}
+
 		err = func() error {
 			o := host.Write(hdr.Name)
 			defer o.Close()

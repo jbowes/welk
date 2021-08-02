@@ -39,18 +39,19 @@ func fileSync(fs []*vfs.ManifestEntry) error {
 
 		// TODO: support windows
 		bin := filepath.Join(xdg.Home, ".local", "bin")
+		if err := os.MkdirAll(bin, 0700); err != nil {
+			return err
+		}
 
 		rel, err := filepath.Rel(bin, name)
 		if err != nil {
 			rel = name
 		}
-
-		if err := os.MkdirAll(bin, 0700); err != nil {
+		// TODO: if exec only
+		if err := os.Symlink(rel, filepath.Join(bin, filepath.Base(name))); err != nil {
 			return err
 		}
 
-		// TODO: if exec only
-		return os.Symlink(rel, filepath.Join(bin, filepath.Base(name)))
 	}
 
 	return nil

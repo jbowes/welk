@@ -9,8 +9,7 @@ import (
 )
 
 type VFS struct {
-	dir string // working directory
-
+	dir   string // working directory
 	files map[string]*file
 }
 
@@ -50,8 +49,12 @@ func (v *VFS) Remove(path string) {
 		return
 	}
 
-	// TODO: recurse
-	delete(v.files, path)
+	for k := range v.files {
+		// TODO: Not the best prefix comparision, WRT case-insensitivity
+		if k == path || strings.HasPrefix(k, path) && len(k) > len(path) && k[len(path)] == filepath.Separator {
+			delete(v.files, k)
+		}
+	}
 }
 
 // TODO: not a good enough return
@@ -78,8 +81,6 @@ func (v *VFS) Write(name string) io.WriteCloser {
 }
 
 func (v *VFS) Move(from, to string) error {
-	// TODO: recurse
-
 	if !filepath.IsAbs(from) {
 		from = filepath.Join(v.dir, from)
 	}
@@ -92,14 +93,24 @@ func (v *VFS) Move(from, to string) error {
 		return errors.New("file not found")
 	}
 
-	delete(v.files, from)
-
+	// Figure out if we're moving into a directory or not.
+	// TODO: this logic could be in the move command
 	t, ok := v.files[to]
-	if !ok || !t.dir {
+	if ok && t.dir {
 		// TODO: check real FS.
-		v.files[to] = f
-	} else {
-		v.files[filepath.Join(to, filepath.Base(from))] = f
+		to = filepath.Join(to, filepath.Base(from))
+	}
+
+	delete(v.files, from)
+	v.files[to] = f
+
+	for k, f := range v.files {
+		// TODO: Not the best prefix comparision, WRT case-insensitivity
+		if strings.HasPrefix(k, from) && len(k) > len(from) && k[len(from)] == filepath.Separator {
+			newTo := strings.Replace(k, from, to, 1)
+			delete(v.files, k)
+			v.files[newTo] = f
+		}
 	}
 
 	return nil
