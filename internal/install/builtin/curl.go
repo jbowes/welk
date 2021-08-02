@@ -85,7 +85,7 @@ func Curl(ctx context.Context, host Host, ios IOs, args []string) error {
 
 	// TODO: more robust handling here.
 	out := *outfmt
-	out = strings.ReplaceAll(out, "%(http_code)", fmt.Sprintf("%d", resp.StatusCode))
+	out = strings.ReplaceAll(out, "%{http_code}", fmt.Sprintf("%d", resp.StatusCode))
 	_, err = ios.Out.Write([]byte(out))
 	return err
 }

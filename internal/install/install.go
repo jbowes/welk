@@ -182,7 +182,12 @@ func (r *runner) ExecHandler(ctx context.Context, args []string) error {
 	}
 
 	hc := interp.HandlerCtx(ctx)
-	return b(ctx, r, builtin.IOs{In: hc.Stdin, Out: hc.Stdout}, args[1:])
+	err := b(ctx, r, builtin.IOs{In: hc.Stdin, Out: hc.Stdout}, args[1:])
+	if err != nil {
+		fmt.Printf("err in %s: %s\n", cmd, err)
+	}
+
+	return err
 }
 
 func (r *runner) OpenHandler(ctx context.Context, path string, flag int, perm os.FileMode) (io.ReadWriteCloser, error) {

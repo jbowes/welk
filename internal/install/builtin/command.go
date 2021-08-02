@@ -16,7 +16,7 @@ func Command(ctx context.Context, host Host, ios IOs, args []string) error {
 		return err
 	}
 
-	host.Log("command")
+	host.Log("command", fs.Arg(0))
 
 	if !*v {
 		// TODO: implement this.

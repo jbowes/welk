@@ -6,7 +6,6 @@ import (
 	"compress/gzip"
 	"context"
 	"errors"
-	"fmt"
 	"io"
 
 	"github.com/spf13/pflag"
@@ -16,12 +15,14 @@ func Tar(ctx context.Context, host Host, ios IOs, args []string) error {
 	// TODO: supported bundled args? eg tar zxf instead of tar -zxf
 
 	fs := pflag.NewFlagSet("", pflag.ContinueOnError)
+
+	fs.Bool("no-same-owner", false, "") // ignored
+
 	gz := fs.BoolP("z", "z", false, "")
 	extract := fs.BoolP("x", "x", false, "")
 	fname := fs.StringP("f", "f", "", "")
 	err := fs.Parse(args)
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
 
