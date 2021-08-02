@@ -2,6 +2,7 @@ package builtin
 
 import (
 	"context"
+	"fmt"
 	"io"
 )
 
@@ -24,3 +25,14 @@ type IOs struct {
 type BuiltinFunc func(ctx context.Context, host Host, ios IOs, args []string) error
 
 var Builtin = make(map[string]BuiltinFunc)
+
+type ExitStatusError struct {
+	status uint8
+}
+
+func NewExitStatusError(status uint8) error { return &ExitStatusError{status: status} }
+
+func (e *ExitStatusError) Error() string { return fmt.Sprintf("exit code %d", e.status) }
+func (e ExitStatusError) Status() uint8  { return e.status }
+
+var _ error = &ExitStatusError{}

@@ -2,6 +2,7 @@ package install
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -183,6 +184,14 @@ func (r *runner) ExecHandler(ctx context.Context, args []string) error {
 
 	hc := interp.HandlerCtx(ctx)
 	err := b(ctx, r, builtin.IOs{In: hc.Stdin, Out: hc.Stdout}, args[1:])
+	var e *builtin.ExitStatusError
+	switch {
+	case err == nil:
+	case errors.As(err, &e):
+		return interp.NewExitStatus(e.Status())
+	default:
+		return err
+	}
 	if err != nil {
 		fmt.Printf("err in %s: %s\n", cmd, err)
 	}

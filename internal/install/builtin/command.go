@@ -26,7 +26,7 @@ func Command(ctx context.Context, host Host, ios IOs, args []string) error {
 	if _, ok := Builtin[fs.Arg(0)]; ok {
 		ios.Out.Write([]byte(fmt.Sprintf("/usr/bin/%s", fs.Arg(0))))
 	} else {
-		return errors.New("couldn't find command")
+		return NewExitStatusError(1)
 	}
 
 	return nil
