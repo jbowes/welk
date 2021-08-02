@@ -3,7 +3,6 @@ package builtin
 import (
 	"context"
 	"errors"
-	"fmt"
 	"io"
 	"strings"
 
@@ -28,8 +27,8 @@ func Tr(ctx context.Context, host Host, ios IOs, args []string) error {
 
 	// XXX: convert escape chars, not fully accurate
 	// TODO: this is totally wrong
-	s1 := fmt.Sprint(fs.Arg(0))
-	s2 := fmt.Sprint(fs.Arg(1))
+	s1 := readTrInput(fs.Arg(0))
+	s2 := readTrInput(fs.Arg(1))
 
 	// if s2 < s1, repeat last char for replacement.
 	replace := map[string]string{}
@@ -54,7 +53,7 @@ func Tr(ctx context.Context, host Host, ios IOs, args []string) error {
 	out := string(buf)
 
 	// TODO: hacky special case
-	if !*delete && s1 == "[:upper:]" && s2 == "[:lower:]" {
+	if !*delete && fs.Arg(0) == "[:upper:]" && fs.Arg(1) == "[:lower:]" {
 		out = strings.ToLower(out)
 	} else {
 
@@ -87,6 +86,31 @@ func Tr(ctx context.Context, host Host, ios IOs, args []string) error {
 	_, err = ios.Out.Write([]byte(out))
 
 	return err
+}
+
+func readTrInput(s string) []rune {
+	var out []rune
+
+	var inEsc bool
+	for _, c := range s {
+		if inEsc {
+			switch c {
+			case 'n':
+				c = '\n'
+			case 't':
+				c = '\t'
+			}
+
+			inEsc = false
+		} else if c == '\\' {
+			inEsc = true
+			continue
+		}
+
+		out = append(out, c)
+	}
+
+	return out
 }
 
 func init() { Builtin["tr"] = Tr }
