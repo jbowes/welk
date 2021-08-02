@@ -51,6 +51,10 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 				x.Args[0].Parts[0].(*syntax.Lit).Value = "sumdog-cd"
 			}
 
+			if len(x.Args) > 0 && x.Args[0].Lit() == "command" {
+				x.Args[0].Parts[0].(*syntax.Lit).Value = "sumdog-command"
+			}
+
 		}
 		return true
 	})

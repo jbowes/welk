@@ -40,6 +40,10 @@ func Curl(ctx context.Context, host Host, ios IOs, args []string) error {
 	for _, h := range *hdrs {
 		// TODO: better parsing
 		parts := strings.SplitN(h, ": ", 2)
+		if len(parts) == 1 {
+			parts = strings.SplitN(h, ":", 2)
+		}
+
 		req.Header.Add(parts[0], parts[1])
 	}
 
