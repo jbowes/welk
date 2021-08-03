@@ -9,6 +9,8 @@ import (
 )
 
 type VFS struct {
+	// TODO: dir has to work with subshell , so maybe dir doesn't live here.
+
 	dir   string // working directory
 	files map[string]*file
 }

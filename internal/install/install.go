@@ -61,6 +61,16 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 	})
 
 	v := &vfs.VFS{}
+
+	pdU, err := uuid.NewRandom()
+	if err != nil {
+		return err
+	}
+
+	pkgDir := "/" + pdU.String()
+
+	v.ChDir(pkgDir)
+
 	run := &runner{
 		builtin:       builtin.Builtin,
 		sham:          sham.Sham,
