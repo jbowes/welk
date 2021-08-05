@@ -27,12 +27,15 @@ func (f *file) Write(p []byte) (int, error) {
 func (f *file) Close() error { return nil }
 
 func (v *VFS) ChDir(path string) {
+	path = filepath.Clean(path)
 	v.dir = path
 }
 
 func (v *VFS) MkDir(path string) {
 	if !filepath.IsAbs(path) {
 		path = filepath.Join(v.dir, path)
+	} else {
+		path = filepath.Clean(path)
 	}
 
 	if v.files == nil {
@@ -45,6 +48,8 @@ func (v *VFS) MkDir(path string) {
 func (v *VFS) Remove(path string) {
 	if !filepath.IsAbs(path) {
 		path = filepath.Join(v.dir, path)
+	} else {
+		path = filepath.Clean(path)
 	}
 
 	if v.files == nil {
@@ -63,6 +68,8 @@ func (v *VFS) Remove(path string) {
 func (v *VFS) File(path string) []byte {
 	if !filepath.IsAbs(path) {
 		path = filepath.Join(v.dir, path)
+	} else {
+		path = filepath.Clean(path)
 	}
 
 	return v.files[path].b
@@ -71,6 +78,8 @@ func (v *VFS) File(path string) []byte {
 func (v *VFS) Write(name string) io.WriteCloser {
 	if !filepath.IsAbs(name) {
 		name = filepath.Join(v.dir, name)
+	} else {
+		name = filepath.Clean(name)
 	}
 
 	if v.files == nil {
@@ -85,9 +94,13 @@ func (v *VFS) Write(name string) io.WriteCloser {
 func (v *VFS) Move(from, to string) error {
 	if !filepath.IsAbs(from) {
 		from = filepath.Join(v.dir, from)
+	} else {
+		from = filepath.Clean(from)
 	}
 	if !filepath.IsAbs(to) {
 		to = filepath.Join(v.dir, to)
+	} else {
+		to = filepath.Clean(to)
 	}
 
 	f, ok := v.files[from]
