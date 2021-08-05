@@ -28,7 +28,7 @@ func Cat(ctx context.Context, host Host, ios IOs, args []string) error {
 			}
 			fmt.Println(f)
 			// TODO: check for existance and error?
-			b = append(b, host.File(f)...)
+			b = append(b, host.File(ctx, f)...)
 		}
 	}
 

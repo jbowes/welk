@@ -12,13 +12,12 @@ import (
 
 type testHost struct{}
 
-func (testHost) Log(tag string, message ...string) {}
-func (testHost) File(path string) []byte           { return nil }
-func (testHost) ChDir(path string)                 {}
-func (testHost) Write(path string) io.WriteCloser  { return nil }
-func (testHost) MkDir(path string)                 {}
-func (testHost) Remove(path string)                {}
-func (testHost) Move(from, to string) error        { return nil }
+func (testHost) Log(tag string, message ...string)                     {}
+func (testHost) File(ctx context.Context, path string) []byte          { return nil }
+func (testHost) Write(ctx context.Context, path string) io.WriteCloser { return nil }
+func (testHost) MkDir(ctx context.Context, path string)                {}
+func (testHost) Remove(ctx context.Context, path string)               {}
+func (testHost) Move(ctx context.Context, from, to string) error       { return nil }
 
 func TestAwk(t *testing.T) {
 	// github release parsing from garden.io install script.

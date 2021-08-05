@@ -19,7 +19,7 @@ func Install(ctx context.Context, host Host, ios IOs, args []string) error {
 
 	if *d {
 		for _, n := range fs.Args() {
-			host.MkDir(n)
+			host.MkDir(ctx, n)
 		}
 
 		return nil
@@ -30,13 +30,13 @@ func Install(ctx context.Context, host Host, ios IOs, args []string) error {
 	}
 
 	if len(fs.Args()) == 2 {
-		b := host.File(fs.Arg(0))
+		b := host.File(ctx, fs.Arg(0))
 
-		host.Move(fs.Arg(0), fs.Arg(1))
+		host.Move(ctx, fs.Arg(0), fs.Arg(1))
 
 		// TODO: awkward, but works with move semantics to dir.
 
-		o := host.Write(fs.Arg(0))
+		o := host.Write(ctx, fs.Arg(0))
 		defer o.Close()
 
 		o.Write(b)

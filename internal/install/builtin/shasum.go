@@ -50,7 +50,7 @@ func Shasum(ctx context.Context, host Host, ios IOs, args []string) error {
 			return err
 		}
 	} else {
-		b = host.File(fs.Arg(0))
+		b = host.File(ctx, fs.Arg(0))
 		name = fs.Arg(0)
 	}
 

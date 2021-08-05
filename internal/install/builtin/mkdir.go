@@ -18,7 +18,7 @@ func Mkdir(ctx context.Context, host Host, ios IOs, args []string) error {
 
 	host.Log("mkdir", fs.Arg(0))
 
-	host.MkDir(fs.Arg(0))
+	host.MkDir(ctx, fs.Arg(0))
 	return nil
 }
 

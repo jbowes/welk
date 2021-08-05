@@ -13,7 +13,7 @@ func Openssl(ctx context.Context, host Host, ios IOs, args []string) error {
 		return errors.New("only openssl dgst -sha256 is supported")
 	}
 
-	s := sha256.Sum256(host.File(args[2]))
+	s := sha256.Sum256(host.File(ctx, args[2]))
 	_, err := fmt.Fprintf(ios.Out, "SHA256(%s)= %x\n", args[2], s)
 
 	return err

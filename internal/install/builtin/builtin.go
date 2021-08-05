@@ -9,12 +9,11 @@ import (
 type Host interface {
 	Log(tag string, message ...string)
 
-	File(path string) []byte
-	ChDir(path string)
-	Write(path string) io.WriteCloser
-	MkDir(path string)
-	Remove(path string)
-	Move(from, to string) error
+	File(ctx context.Context, path string) []byte
+	Write(ctx context.Context, path string) io.WriteCloser
+	MkDir(ctx context.Context, path string)
+	Remove(ctx context.Context, path string)
+	Move(ctx context.Context, from, to string) error
 }
 
 type IOs struct {

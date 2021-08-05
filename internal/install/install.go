@@ -48,34 +48,22 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 				x.Args[0].Parts[0].(*syntax.Lit).Value = "sumdog-printf"
 			}
 
-			if len(x.Args) > 0 && x.Args[0].Lit() == "cd" {
-				x.Args[0].Parts[0].(*syntax.Lit).Value = "sumdog-cd"
-			}
-
 			if len(x.Args) > 0 && x.Args[0].Lit() == "command" {
 				x.Args[0].Parts[0].(*syntax.Lit).Value = "sumdog-command"
 			}
 
+			// TODO: log cd, pushd, popd
 		}
 		return true
 	})
 
 	v := &vfs.VFS{}
-
-	pdU, err := uuid.NewRandom()
-	if err != nil {
-		return err
-	}
-
-	pkgDir := "/" + pdU.String()
-
-	v.ChDir(pkgDir)
-
 	run := &runner{
+		VFS: v,
+
 		builtin:       builtin.Builtin,
 		sham:          sham.Sham,
 		permittedExec: permittedExec,
-		vfs:           v,
 		log:           log,
 	}
 
@@ -99,6 +87,16 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 	if err != nil {
 		return err
 	}
+
+	pdU, err := uuid.NewRandom()
+	if err != nil {
+		return err
+	}
+
+	pkgDir := "/" + pdU.String()
+
+	int.Dir = pkgDir
+	v.Dir = func(ctx context.Context) string { return interp.HandlerCtx(ctx).Dir }
 
 	err = int.Run(ctx, f)
 	if err != nil {
@@ -141,21 +139,16 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 }
 
 type runner struct {
+	*vfs.VFS
+
 	builtin map[string]builtin.BuiltinFunc
 	sham    map[string]builtin.BuiltinFunc
-	vfs     *vfs.VFS
 
 	permittedExec func(args []string) bool
 	log           func(tag string, msg ...string)
 }
 
-func (r *runner) Log(tag string, msg ...string)    { r.log(tag, msg...) }
-func (r *runner) ChDir(path string)                { r.vfs.ChDir(path) }
-func (r *runner) File(path string) []byte          { return r.vfs.File(path) }
-func (r *runner) Write(path string) io.WriteCloser { return r.vfs.Write(path) }
-func (r *runner) MkDir(path string)                { r.vfs.MkDir(path) }
-func (r *runner) Remove(path string)               { r.vfs.Remove(path) }
-func (r *runner) Move(from, to string) error       { return r.vfs.Move(from, to) }
+func (r *runner) Log(tag string, msg ...string) { r.log(tag, msg...) }
 
 var paths = []string{
 	"/usr/bin",
@@ -214,5 +207,6 @@ func (r *runner) OpenHandler(ctx context.Context, path string, flag int, perm os
 		return devnull.New(), nil
 	}
 
+	// TODO: connect this to the VFS
 	return nil, fmt.Errorf("shell file opening not implemented")
 }

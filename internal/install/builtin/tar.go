@@ -34,7 +34,7 @@ func Tar(ctx context.Context, host Host, ios IOs, args []string) error {
 
 	in := ios.In
 	if *fname != "" {
-		in = bytes.NewReader(host.File(*fname))
+		in = bytes.NewReader(host.File(ctx, *fname))
 	}
 
 	if *gz {
@@ -55,12 +55,12 @@ func Tar(ctx context.Context, host Host, ios IOs, args []string) error {
 		}
 
 		if hdr.Typeflag == tar.TypeDir {
-			host.MkDir(hdr.Name)
+			host.MkDir(ctx, hdr.Name)
 			continue
 		}
 
 		err = func() error {
-			o := host.Write(hdr.Name)
+			o := host.Write(ctx, hdr.Name)
 			defer o.Close()
 
 			_, err := io.Copy(o, tr)

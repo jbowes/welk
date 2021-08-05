@@ -10,7 +10,7 @@ func Mktemp(ctx context.Context, host Host, ios IOs, args []string) error {
 	fname := "/temp/faketmp/...."
 	host.Log("mktemp", fname)
 
-	host.MkDir(fname)
+	host.MkDir(ctx, fname)
 
 	_, err := ios.Out.Write([]byte(fname))
 	return err

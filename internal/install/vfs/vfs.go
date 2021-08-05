@@ -1,6 +1,7 @@
 package vfs
 
 import (
+	"context"
 	"errors"
 	"io"
 	"path/filepath"
@@ -9,9 +10,7 @@ import (
 )
 
 type VFS struct {
-	// TODO: dir has to work with subshell , so maybe dir doesn't live here.
-
-	dir   string // working directory
+	Dir   func(context.Context) string // Get the working directory
 	files map[string]*file
 }
 
@@ -26,14 +25,9 @@ func (f *file) Write(p []byte) (int, error) {
 }
 func (f *file) Close() error { return nil }
 
-func (v *VFS) ChDir(path string) {
-	path = filepath.Clean(path)
-	v.dir = path
-}
-
-func (v *VFS) MkDir(path string) {
+func (v *VFS) MkDir(ctx context.Context, path string) {
 	if !filepath.IsAbs(path) {
-		path = filepath.Join(v.dir, path)
+		path = filepath.Join(v.Dir(ctx), path)
 	} else {
 		path = filepath.Clean(path)
 	}
@@ -45,9 +39,9 @@ func (v *VFS) MkDir(path string) {
 	v.files[path] = &file{dir: true}
 }
 
-func (v *VFS) Remove(path string) {
+func (v *VFS) Remove(ctx context.Context, path string) {
 	if !filepath.IsAbs(path) {
-		path = filepath.Join(v.dir, path)
+		path = filepath.Join(v.Dir(ctx), path)
 	} else {
 		path = filepath.Clean(path)
 	}
@@ -65,9 +59,9 @@ func (v *VFS) Remove(path string) {
 }
 
 // TODO: not a good enough return
-func (v *VFS) File(path string) []byte {
+func (v *VFS) File(ctx context.Context, path string) []byte {
 	if !filepath.IsAbs(path) {
-		path = filepath.Join(v.dir, path)
+		path = filepath.Join(v.Dir(ctx), path)
 	} else {
 		path = filepath.Clean(path)
 	}
@@ -75,9 +69,9 @@ func (v *VFS) File(path string) []byte {
 	return v.files[path].b
 }
 
-func (v *VFS) Write(name string) io.WriteCloser {
+func (v *VFS) Write(ctx context.Context, name string) io.WriteCloser {
 	if !filepath.IsAbs(name) {
-		name = filepath.Join(v.dir, name)
+		name = filepath.Join(v.Dir(ctx), name)
 	} else {
 		name = filepath.Clean(name)
 	}
@@ -91,14 +85,14 @@ func (v *VFS) Write(name string) io.WriteCloser {
 	return v.files[name]
 }
 
-func (v *VFS) Move(from, to string) error {
+func (v *VFS) Move(ctx context.Context, from, to string) error {
 	if !filepath.IsAbs(from) {
-		from = filepath.Join(v.dir, from)
+		from = filepath.Join(v.Dir(ctx), from)
 	} else {
 		from = filepath.Clean(from)
 	}
 	if !filepath.IsAbs(to) {
-		to = filepath.Join(v.dir, to)
+		to = filepath.Join(v.Dir(ctx), to)
 	} else {
 		to = filepath.Clean(to)
 	}

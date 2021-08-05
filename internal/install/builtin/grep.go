@@ -33,7 +33,7 @@ func Grep(ctx context.Context, host Host, ios IOs, args []string) error {
 			return err
 		}
 	} else {
-		buf = host.File(fs.Arg(1))
+		buf = host.File(ctx, fs.Arg(1))
 	}
 
 	found := false

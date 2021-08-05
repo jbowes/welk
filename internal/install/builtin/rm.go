@@ -19,7 +19,7 @@ func Rm(ctx context.Context, host Host, ios IOs, args []string) error {
 
 	host.Log("rm", fs.Arg(0))
 
-	host.Remove(fs.Arg(0))
+	host.Remove(ctx, fs.Arg(0))
 	return nil
 }
 

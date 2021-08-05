@@ -69,10 +69,10 @@ func Curl(ctx context.Context, host Host, ios IOs, args []string) error {
 			return err
 		}
 
-		wc = host.Write(path.Base(u.Path))
+		wc = host.Write(ctx, path.Base(u.Path))
 	}
 	if *lname != "" {
-		wc = host.Write(*lname)
+		wc = host.Write(ctx, *lname)
 	}
 
 	if _, err = io.Copy(wc, resp.Body); err != nil {
