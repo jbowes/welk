@@ -2,6 +2,7 @@ package install
 
 import (
 	"context"
+	"encoding/base32"
 	"errors"
 	"fmt"
 	"io"
@@ -57,9 +58,8 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 		return true
 	})
 
-	v := &vfs.VFS{}
 	run := &runner{
-		VFS: v,
+		VFS: &vfs.VFS{},
 
 		builtin:       builtin.Builtin,
 		sham:          sham.Sham,
@@ -97,7 +97,7 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 	pkgDir := "/" + pdU.String()
 
 	int.Dir = pkgDir
-	v.Dir = func(ctx context.Context) string { return interp.HandlerCtx(ctx).Dir }
+	run.Dir = func(ctx context.Context) string { return interp.HandlerCtx(ctx).Dir }
 
 	err = int.Run(ctx, f)
 	if err != nil {
@@ -106,9 +106,12 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 
 	fmt.Println("Preparing to install")
 
-	fs := v.Manifest()
+	// TODO: does this make sense? display is not great. could be $SUMDOG_PKG_DIR instead.
+	realPkgDir := filepath.Join("$XDG_DATA_HOME", "sumdog", "pkg", base32.HexEncoding.EncodeToString([]byte(url)))
+	fs := run.Manifest()
 	for i := range fs {
 		fs[i].Name = strings.ReplaceAll(fs[i].Name, homevar, "$HOME")
+		fs[i].Name = strings.ReplaceAll(fs[i].Name, pkgDir, realPkgDir)
 		fmt.Println(fs[i].Name)
 	}
 
@@ -125,6 +128,8 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 		Files: mfs,
 	}
 
+	// TODO: the db ends up with the env var locations for files. that's probably ok, but it could be exact.
+	// installed values could be exact that is. reuse for available packages should use env vars.
 	d := db.DB{Root: filepath.Join(xdg.DataHome, "sumdog", "installed")}
 	txn, err := d.Begin(m)
 	if err != nil {

@@ -13,6 +13,9 @@ import (
 
 func fileSync(fs []*vfs.ManifestEntry) error {
 	// TODO: attempt to cleanup on error? or leave for broken.
+
+	os.Setenv("XDG_DATA_HOME", xdg.DataHome)
+
 	for _, e := range fs {
 
 		// TODO: windows support needed.
@@ -47,6 +50,7 @@ func fileSync(fs []*vfs.ManifestEntry) error {
 		if err != nil {
 			rel = name
 		}
+
 		// TODO: if exec only
 		if err := os.Symlink(rel, filepath.Join(bin, filepath.Base(name))); err != nil {
 			return err
