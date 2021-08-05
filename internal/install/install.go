@@ -13,12 +13,12 @@ import (
 	"github.com/adrg/xdg"
 	"github.com/google/uuid"
 	"github.com/jbowes/sumdog/internal/db"
+	"github.com/jbowes/sumdog/internal/forked/interp" // originally mvdan.cc/sh/v3/interp
 	"github.com/jbowes/sumdog/internal/install/builtin"
 	"github.com/jbowes/sumdog/internal/install/devnull"
 	"github.com/jbowes/sumdog/internal/install/sham"
 	"github.com/jbowes/sumdog/internal/install/vfs"
 	"mvdan.cc/sh/v3/expand"
-	"mvdan.cc/sh/v3/interp"
 	"mvdan.cc/sh/v3/syntax"
 )
 
