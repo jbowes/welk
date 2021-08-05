@@ -291,3 +291,16 @@ func DefaultOpenHandler() OpenHandlerFunc {
 		return os.OpenFile(path, flag, perm)
 	}
 }
+
+type StatHandlerFunc func(ctx context.Context, path string) (os.FileInfo, error)
+
+func DefaultStatHandler() StatHandlerFunc {
+	return func(ctx context.Context, path string) (os.FileInfo, error) {
+		mc := HandlerCtx(ctx)
+		if !filepath.IsAbs(path) {
+			path = filepath.Join(mc.Dir, path)
+		}
+
+		return os.Stat(path)
+	}
+}

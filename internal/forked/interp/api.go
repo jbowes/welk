@@ -68,6 +68,9 @@ type Runner struct {
 	// openHandler is a function responsible for opening files. It must be non-nil.
 	openHandler OpenHandlerFunc
 
+	// statHandler is a function responsible for stating files. It must be non-nil.
+	statHandler StatHandlerFunc
+
 	stdin  io.Reader
 	stdout io.Writer
 	stderr io.Writer
@@ -165,6 +168,7 @@ func New(opts ...RunnerOption) (*Runner, error) {
 		usedNew:     true,
 		execHandler: DefaultExecHandler(2 * time.Second),
 		openHandler: DefaultOpenHandler(),
+		statHandler: DefaultStatHandler(),
 	}
 	r.dirStack = r.dirBootstrap[:0]
 	for _, opt := range opts {
@@ -304,6 +308,13 @@ func OpenHandler(f OpenHandlerFunc) RunnerOption {
 	}
 }
 
+func StatHandler(f StatHandlerFunc) RunnerOption {
+	return func(r *Runner) error {
+		r.statHandler = f
+		return nil
+	}
+}
+
 // StdIO configures an interpreter's standard input, standard output, and
 // standard error. If out or err are nil, they default to a writer that discards
 // the output.
@@ -401,6 +412,7 @@ func (r *Runner) Reset() {
 		Env:         r.Env,
 		execHandler: r.execHandler,
 		openHandler: r.openHandler,
+		statHandler: r.statHandler,
 
 		// These can be set by functions like Dir or Params, but
 		// builtins can overwrite them; reset the fields to whatever the
@@ -552,6 +564,7 @@ func (r *Runner) Subshell() *Runner {
 		Params:      r.Params,
 		execHandler: r.execHandler,
 		openHandler: r.openHandler,
+		statHandler: r.statHandler,
 		stdin:       r.stdin,
 		stdout:      r.stdout,
 		stderr:      r.stderr,

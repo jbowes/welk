@@ -81,6 +81,7 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 		interp.Env(expand.ListEnviron(fmt.Sprintf("HOME=%s", homevar))), // TODO: configurable inclusion list.
 		interp.ExecHandler(run.ExecHandler),
 		interp.OpenHandler(run.OpenHandler),
+		interp.StatHandler(run.StatHandler),
 		// interp.Params(), /* passed in by user */
 		interp.StdIO(dn, dn, dn),
 	)
@@ -209,4 +210,8 @@ func (r *runner) OpenHandler(ctx context.Context, path string, flag int, perm os
 
 	// TODO: connect this to the VFS
 	return nil, fmt.Errorf("shell file opening not implemented")
+}
+
+func (r *runner) StatHandler(ctx context.Context, path string) (os.FileInfo, error) {
+	return r.Stat(ctx, path)
 }

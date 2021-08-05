@@ -4,9 +4,11 @@ import (
 	"context"
 	"errors"
 	"io"
+	"io/fs"
 	"path/filepath"
 	"sort"
 	"strings"
+	"time"
 )
 
 type VFS struct {
@@ -19,11 +21,33 @@ type file struct {
 	b   []byte
 }
 
+// fs.Fileinfo interface.
+func (f file) Name() string       { return "" } // TODO: implement me
+func (f file) Size() int64        { return int64(len(f.b)) }
+func (f file) Mode() fs.FileMode  { return 0 }          // TODO: implement me
+func (f file) ModTime() time.Time { return time.Now() } // TODO: implement me
+func (f file) IsDir() bool        { return f.dir }
+func (f file) Sys() interface{}   { return nil }
+
 func (f *file) Write(p []byte) (int, error) {
 	f.b = append(f.b, p...)
 	return len(p), nil
 }
 func (f *file) Close() error { return nil }
+
+func (v *VFS) Stat(ctx context.Context, path string) (fs.FileInfo, error) {
+	if !filepath.IsAbs(path) {
+		path = filepath.Join(v.Dir(ctx), path)
+	} else {
+		path = filepath.Clean(path)
+	}
+
+	if _, ok := v.files[path]; !ok {
+		return nil, fs.ErrNotExist
+	}
+
+	return v.files[path], nil
+}
 
 func (v *VFS) MkDir(ctx context.Context, path string) {
 	if !filepath.IsAbs(path) {

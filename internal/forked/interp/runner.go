@@ -817,6 +817,6 @@ func (r *Runner) open(ctx context.Context, path string, flags int, mode os.FileM
 	return f, err
 }
 
-func (r *Runner) stat(name string) (os.FileInfo, error) {
-	return os.Stat(r.absPath(name))
+func (r *Runner) stat(ctx context.Context, name string) (os.FileInfo, error) {
+	return r.statHandler(r.handlerCtx(ctx), name)
 }
