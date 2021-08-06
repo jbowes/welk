@@ -2,6 +2,7 @@ package install
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -52,7 +53,21 @@ func fileSync(fs []*vfs.ManifestEntry) error {
 		}
 
 		// TODO: if exec only
-		if err := os.Symlink(rel, filepath.Join(bin, filepath.Base(name))); err != nil {
+		sym := filepath.Join(bin, filepath.Base(name))
+		err = os.Symlink(rel, sym)
+		switch {
+		case err == nil:
+		case errors.Is(err, os.ErrExist):
+			s, sErr := filepath.EvalSymlinks(sym)
+			if sErr != nil {
+				return err
+			}
+
+			if s != name {
+				// TODO: offer to replace symlink?
+				return err
+			}
+		default:
 			return err
 		}
 
