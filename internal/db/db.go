@@ -29,6 +29,8 @@ type Manifest struct {
 	URL string `yaml:"url"` // TODO: checksum
 	// TODO: secondary URLs + checksum
 
+	// TODO: include values of env vars when installed.
+
 	// TODO: include created symlinks
 
 	Files []*File `yaml:"files"`
@@ -93,7 +95,11 @@ func (t *Txn) writeManifest() error {
 	}
 
 	// base 32 hex encoding preserves alphabetic ordering
-	return ioutil.WriteFile(filepath.Join(t.db.Root, base32.HexEncoding.EncodeToString([]byte(t.m.URL))+".yaml"), d, 0600)
+	return ioutil.WriteFile(fname(t.db.Root, t.m.URL), d, 0600)
+}
+
+func (d *DB) Query(url string) (*Manifest, error) {
+	return openManifest(fname(d.Root, url))
 }
 
 func (d *DB) List(fn func(m *Manifest) error) error {
@@ -111,19 +117,32 @@ func (d *DB) List(fn func(m *Manifest) error) error {
 			continue
 		}
 
-		b, err := ioutil.ReadFile(filepath.Join(d.Root, de.Name()))
+		m, err := openManifest(filepath.Join(d.Root, de.Name()))
 		if err != nil {
 			return err
 		}
 
-		var m Manifest
-		if err := yaml.Unmarshal(b, &m); err != nil {
-			return err
-		}
-
-		if err := fn(&m); err != nil {
+		if err := fn(m); err != nil {
 			return err
 		}
 	}
 	return nil
+}
+
+func openManifest(path string) (*Manifest, error) {
+	b, err := ioutil.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+
+	var m Manifest
+	if err := yaml.Unmarshal(b, &m); err != nil {
+		return nil, err
+	}
+
+	return &m, nil
+}
+
+func fname(root, url string) string {
+	return filepath.Join(root, base32.HexEncoding.EncodeToString([]byte(url))+".yaml")
 }
