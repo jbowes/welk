@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 
 	"github.com/adrg/xdg"
-	"github.com/jbowes/sumdog/internal/install/vfs"
+	"github.com/jbowes/welk/internal/install/vfs"
 )
 
 func fileSync(fs []*vfs.ManifestEntry) error {

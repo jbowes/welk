@@ -1,5 +1,5 @@
 package main
 
-import "github.com/jbowes/sumdog/internal/cmd"
+import "github.com/jbowes/welk/internal/cmd"
 
 func main() { cmd.Execute() }

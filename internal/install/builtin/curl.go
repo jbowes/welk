@@ -9,7 +9,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/jbowes/sumdog/internal/install/devnull"
+	"github.com/jbowes/welk/internal/install/devnull"
 	"github.com/spf13/pflag"
 )
 

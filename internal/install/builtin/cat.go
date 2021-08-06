@@ -6,7 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 
-	"github.com/jbowes/sumdog/internal/install/devnull"
+	"github.com/jbowes/welk/internal/install/devnull"
 )
 
 func Cat(ctx context.Context, host Host, ios IOs, args []string) error {

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/jbowes/sumdog/internal/install/builtin"
+	"github.com/jbowes/welk/internal/install/builtin"
 	"golang.org/x/mod/semver"
 )
 

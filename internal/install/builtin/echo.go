@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/jbowes/sumdog/internal/install/devnull"
+	"github.com/jbowes/welk/internal/install/devnull"
 )
 
 func Echo(ctx context.Context, host Host, ios IOs, args []string) error {
@@ -23,4 +23,4 @@ func Echo(ctx context.Context, host Host, ios IOs, args []string) error {
 	return nil
 }
 
-func init() { Builtin["sumdog-echo"] = Echo }
+func init() { Builtin["welk-echo"] = Echo }

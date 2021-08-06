@@ -32,4 +32,4 @@ func Command(ctx context.Context, host Host, ios IOs, args []string) error {
 	return nil
 }
 
-func init() { Builtin["sumdog-command"] = Command }
+func init() { Builtin["welk-command"] = Command }

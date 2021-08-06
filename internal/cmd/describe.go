@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 
 	"github.com/adrg/xdg"
-	"github.com/jbowes/sumdog/internal/db"
+	"github.com/jbowes/welk/internal/db"
 	"github.com/spf13/cobra"
 )
 
@@ -14,7 +14,7 @@ var describeCmd = cobra.Command{
 	Short: "describe installed and known curl | sh style packages",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		d := db.DB{Root: filepath.Join(xdg.DataHome, "sumdog", "installed")}
+		d := db.DB{Root: filepath.Join(xdg.DataHome, "welk", "installed")}
 		m, err := d.Query(args[0])
 		if err != nil {
 			fmt.Println(err)

@@ -1,4 +1,4 @@
-module github.com/jbowes/sumdog
+module github.com/jbowes/welk
 
 go 1.16
 

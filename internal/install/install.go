@@ -15,12 +15,12 @@ import (
 
 	"github.com/adrg/xdg"
 	"github.com/google/uuid"
-	"github.com/jbowes/sumdog/internal/db"
-	"github.com/jbowes/sumdog/internal/forked/interp" // originally mvdan.cc/sh/v3/interp
-	"github.com/jbowes/sumdog/internal/install/builtin"
-	"github.com/jbowes/sumdog/internal/install/devnull"
-	"github.com/jbowes/sumdog/internal/install/sham"
-	"github.com/jbowes/sumdog/internal/install/vfs"
+	"github.com/jbowes/welk/internal/db"
+	"github.com/jbowes/welk/internal/forked/interp" // originally mvdan.cc/sh/v3/interp
+	"github.com/jbowes/welk/internal/install/builtin"
+	"github.com/jbowes/welk/internal/install/devnull"
+	"github.com/jbowes/welk/internal/install/sham"
+	"github.com/jbowes/welk/internal/install/vfs"
 	"mvdan.cc/sh/v3/expand"
 	"mvdan.cc/sh/v3/syntax"
 )
@@ -43,16 +43,16 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 		case *syntax.CallExpr:
 
 			if len(x.Args) > 0 && x.Args[0].Lit() == "echo" {
-				x.Args[0].Parts[0].(*syntax.Lit).Value = "sumdog-echo"
+				x.Args[0].Parts[0].(*syntax.Lit).Value = "welk-echo"
 			}
 
 			// TODO: add printf impl
 			if len(x.Args) > 0 && x.Args[0].Lit() == "printf" {
-				x.Args[0].Parts[0].(*syntax.Lit).Value = "sumdog-printf"
+				x.Args[0].Parts[0].(*syntax.Lit).Value = "welk-printf"
 			}
 
 			if len(x.Args) > 0 && x.Args[0].Lit() == "command" {
-				x.Args[0].Parts[0].(*syntax.Lit).Value = "sumdog-command"
+				x.Args[0].Parts[0].(*syntax.Lit).Value = "welk-command"
 			}
 
 			// TODO: log cd, pushd, popd
@@ -103,7 +103,7 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 	pkgDir := "/" + pdU.String()
 
 	// TODO: does this make sense? display is not great. could be $SUMDOG_PKG_DIR instead.
-	realPkgDir := filepath.Join("$XDG_DATA_HOME", "sumdog", "pkg", base32.HexEncoding.EncodeToString([]byte(url)))
+	realPkgDir := filepath.Join("$XDG_DATA_HOME", "welk", "pkg", base32.HexEncoding.EncodeToString([]byte(url)))
 	run.paths[pkgDir] = realPkgDir
 
 	int.Dir = pkgDir
@@ -138,7 +138,7 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 
 	// TODO: the db ends up with the env var locations for files. that's probably ok, but it could be exact.
 	// installed values could be exact that is. reuse for available packages should use env vars.
-	d := db.DB{Root: filepath.Join(xdg.DataHome, "sumdog", "installed")}
+	d := db.DB{Root: filepath.Join(xdg.DataHome, "welk", "installed")}
 	txn, err := d.Begin(m)
 	if err != nil {
 		return err

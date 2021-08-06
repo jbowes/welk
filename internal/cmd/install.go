@@ -7,7 +7,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/jbowes/sumdog/internal/install"
+	"github.com/jbowes/welk/internal/install"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"

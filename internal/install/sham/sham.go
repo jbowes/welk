@@ -7,7 +7,7 @@
 package sham
 
 import (
-	"github.com/jbowes/sumdog/internal/install/builtin"
+	"github.com/jbowes/welk/internal/install/builtin"
 )
 
 // Shams use the BuiltinFunc type, but are not expected to deal with their supplied args,
