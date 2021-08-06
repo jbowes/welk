@@ -16,7 +16,7 @@ var listCmd = cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		d := db.DB{Root: filepath.Join(xdg.DataHome, "sumdog", "installed")}
 		err := d.List(func(m *db.Manifest) error {
-			fmt.Println(m.URL)
+			fmt.Println(m.URL, m.State)
 			return nil
 		})
 		if err != nil {
