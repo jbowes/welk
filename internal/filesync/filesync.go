@@ -1,4 +1,4 @@
-package install
+package filesync
 
 import (
 	"bytes"
@@ -9,10 +9,11 @@ import (
 	"path/filepath"
 
 	"github.com/adrg/xdg"
+	"github.com/jbowes/welk/internal/db"
 	"github.com/jbowes/welk/internal/install/vfs"
 )
 
-func fileSync(fs []*vfs.ManifestEntry) error {
+func Sync(fs []*vfs.ManifestEntry) error {
 	// TODO: attempt to cleanup on error? or leave for broken.
 
 	os.Setenv("XDG_DATA_HOME", xdg.DataHome)
@@ -74,4 +75,36 @@ func fileSync(fs []*vfs.ManifestEntry) error {
 	}
 
 	return nil
+}
+
+func Remove(fs []*db.File) error {
+	// TODO: I don't like that Sync uses vfs and remove uses db.
+
+	os.Setenv("XDG_DATA_HOME", xdg.DataHome)
+
+	// TODO: report multiple errors.
+	var seenErr error
+
+	// go backwards, just so we clean up files in case of non-empty dirs.
+	for i := len(fs) - 1; i >= 0; i-- {
+		f := fs[i]
+
+		// TODO: windows support needed.
+		name := os.ExpandEnv(f.Name)
+
+		if err := os.Remove(name); err != nil && !errors.Is(err, os.ErrNotExist) {
+			seenErr = err
+		}
+
+		// TODO: support windows
+		bin := filepath.Join(xdg.Home, ".local", "bin")
+
+		// TODO: if exec only
+		sym := filepath.Join(bin, filepath.Base(name))
+		if err := os.Remove(sym); err != nil && !errors.Is(err, os.ErrNotExist) {
+			seenErr = err
+		}
+	}
+
+	return seenErr
 }

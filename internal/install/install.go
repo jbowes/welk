@@ -16,6 +16,7 @@ import (
 	"github.com/adrg/xdg"
 	"github.com/google/uuid"
 	"github.com/jbowes/welk/internal/db"
+	"github.com/jbowes/welk/internal/filesync"
 	"github.com/jbowes/welk/internal/forked/interp" // originally mvdan.cc/sh/v3/interp
 	"github.com/jbowes/welk/internal/install/builtin"
 	"github.com/jbowes/welk/internal/install/devnull"
@@ -145,7 +146,7 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 	}
 	defer txn.Rollback()
 
-	if err := fileSync(fs); err != nil {
+	if err := filesync.Sync(fs); err != nil {
 		return err
 	}
 

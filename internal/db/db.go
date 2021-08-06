@@ -2,6 +2,7 @@ package db
 
 import (
 	"encoding/base32"
+	"errors"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -17,6 +18,8 @@ const (
 	PendingManifestState       ManifestState = "pending"
 	BrokenInstallManifestState ManifestState = "broken_install"
 	BrokenManifestState        ManifestState = "broken"
+	PendingDeleteManifestState ManifestState = "pending_delete"
+	BrokenDeleteManifestState  ManifestState = "broken_delete"
 )
 
 type Manifest struct {
@@ -53,7 +56,27 @@ func (db *DB) Begin(m *Manifest) (*Txn, error) {
 	}
 
 	m.State = PendingManifestState
-	t := &Txn{db: db, m: m}
+	t := &Txn{db: db, m: m, fail: BrokenInstallManifestState, commit: func(t *Txn) error {
+		t.m.State = InstalledManifestState
+		return t.writeManifest()
+	}}
+
+	if err := t.writeManifest(); err != nil {
+		return nil, err
+	}
+
+	return t, nil
+}
+
+func (db *DB) Delete(m *Manifest) (*Txn, error) {
+	m.State = PendingManifestState
+	t := &Txn{db: db, m: m, fail: BrokenDeleteManifestState, commit: func(t *Txn) error {
+		if err := os.Remove(fname(t.db.Root, t.m.URL)); err != nil && !errors.Is(err, os.ErrNotExist) {
+			return err
+		}
+
+		return nil
+	}}
 
 	if err := t.writeManifest(); err != nil {
 		return nil, err
@@ -66,6 +89,9 @@ type Txn struct {
 	db   *DB
 	m    *Manifest
 	done bool
+
+	fail   ManifestState
+	commit func(t *Txn) error
 }
 
 func (t *Txn) Rollback() error {
@@ -73,14 +99,13 @@ func (t *Txn) Rollback() error {
 		return nil
 	}
 
-	t.m.State = BrokenInstallManifestState
+	t.m.State = t.fail
 	return t.writeManifest()
 
 }
 
 func (t *Txn) Commit() error {
-	t.m.State = InstalledManifestState
-	err := t.writeManifest()
+	err := t.commit(t)
 	if err == nil {
 		t.done = true
 	}
