@@ -6,10 +6,12 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/fs"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/adrg/xdg"
 	"github.com/google/uuid"
@@ -61,6 +63,8 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 	run := &runner{
 		VFS: &vfs.VFS{},
 
+		paths: make(map[string]string),
+
 		builtin:       builtin.Builtin,
 		sham:          sham.Sham,
 		permittedExec: permittedExec,
@@ -73,6 +77,8 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 		return err
 	}
 	homevar := "/" + homevarU.String()
+
+	run.paths[homevar] = "HOME"
 
 	dn := devnull.New()
 
@@ -96,6 +102,10 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 
 	pkgDir := "/" + pdU.String()
 
+	// TODO: does this make sense? display is not great. could be $SUMDOG_PKG_DIR instead.
+	realPkgDir := filepath.Join("$XDG_DATA_HOME", "sumdog", "pkg", base32.HexEncoding.EncodeToString([]byte(url)))
+	run.paths[pkgDir] = realPkgDir
+
 	int.Dir = pkgDir
 	run.Dir = func(ctx context.Context) string { return interp.HandlerCtx(ctx).Dir }
 
@@ -106,8 +116,6 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 
 	fmt.Println("Preparing to install")
 
-	// TODO: does this make sense? display is not great. could be $SUMDOG_PKG_DIR instead.
-	realPkgDir := filepath.Join("$XDG_DATA_HOME", "sumdog", "pkg", base32.HexEncoding.EncodeToString([]byte(url)))
 	fs := run.Manifest()
 	for i := range fs {
 		fs[i].Name = strings.ReplaceAll(fs[i].Name, homevar, "$HOME")
@@ -146,6 +154,8 @@ func Run(ctx context.Context, permittedExec func([]string) bool, log func(string
 
 type runner struct {
 	*vfs.VFS
+
+	paths map[string]string
 
 	builtin map[string]builtin.BuiltinFunc
 	sham    map[string]builtin.BuiltinFunc
@@ -214,9 +224,30 @@ func (r *runner) OpenHandler(ctx context.Context, path string, flag int, perm os
 	}
 
 	// TODO: connect this to the VFS
-	return nil, fmt.Errorf("shell file opening not implemented")
+	return nil, fmt.Errorf("shell file opening not implemented, so won't open: %s", path)
 }
 
 func (r *runner) StatHandler(ctx context.Context, path string) (os.FileInfo, error) {
-	return r.Stat(ctx, path)
+	fi, err := r.Stat(ctx, path)
+	if err != fs.ErrNotExist {
+		return fi, nil
+	}
+
+	// We might have cd'd into one of the "fake" dirs that we've made for the sandbox.
+	if _, ok := r.paths[path]; !ok {
+		return nil, fs.ErrNotExist
+	}
+
+	return vdir(path), nil
 }
+
+// TODO: this could live in vfs in a way that doesn't create the dir?
+type vdir string
+
+// fs.Fileinfo interface.
+func (v vdir) Name() string     { return string(v) }
+func (vdir) Size() int64        { return 0 }
+func (vdir) Mode() fs.FileMode  { return 0 }          // TODO: implement me
+func (vdir) ModTime() time.Time { return time.Now() } // TODO: implement me
+func (vdir) IsDir() bool        { return true }
+func (vdir) Sys() interface{}   { return nil }
