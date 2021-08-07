@@ -1,3 +1,7 @@
+// Copyright (c) 2021 James Bowes. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package cmd
 
 import (
@@ -10,7 +14,7 @@ import (
 )
 
 var describeCmd = cobra.Command{
-	Use:   "describe a package",
+	Use:   "describe URL",
 	Short: "describe installed and known curl | sh style packages",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {

@@ -1,3 +1,7 @@
+// Copyright (c) 2021 James Bowes. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 // Package sham provides sham implementations of external commands.
 //
 // Any functions contained in this package are less general-purpose commands,
@@ -6,9 +10,7 @@
 // with an inclusion list, or a per-script plugin mechanism (or all 3).
 package sham
 
-import (
-	"github.com/jbowes/welk/internal/install/builtin"
-)
+import "github.com/jbowes/welk/internal/install/builtin"
 
 // Shams use the BuiltinFunc type, but are not expected to deal with their supplied args,
 // as they are already matched.
