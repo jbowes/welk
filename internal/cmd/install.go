@@ -101,10 +101,3 @@ func (c *confirm) View() string {
 	}
 	return c.message + "? " + choice
 }
-
-const (
-	fps              = 60
-	stepSize float64 = 1.0 / (float64(fps) * 2.0)
-	padding          = 2
-	maxWidth         = 80
-)
