@@ -11,7 +11,7 @@ import (
 )
 
 var deleteCmd = cobra.Command{
-	Use:   "delete a package",
+	Use:   "delete URL",
 	Short: "delete a previously installed curl | sh style package",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {

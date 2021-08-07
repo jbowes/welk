@@ -10,7 +10,7 @@ import (
 )
 
 var listCmd = cobra.Command{
-	Use:     "list packages",
+	Use:     "list",
 	Short:   "list installed and known curl | sh style packages",
 	Aliases: []string{"l"},
 	Run: func(cmd *cobra.Command, args []string) {
