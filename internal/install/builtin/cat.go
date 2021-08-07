@@ -37,7 +37,9 @@ func Cat(ctx context.Context, host Host, ios IOs, args []string) error {
 	if devnull.IsDevNull(ios.Out) {
 		host.Log("cat", string(b))
 	} else {
-		io.WriteString(ios.Out, string(b))
+		if _, err := io.WriteString(ios.Out, string(b)); err != nil {
+			return err
+		}
 	}
 
 	return nil
