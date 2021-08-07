@@ -41,8 +41,9 @@ func Grep(ctx context.Context, host Host, ios IOs, args []string) error {
 	for _, p := range parts {
 		if re.MatchString(p) {
 			found = true
-			ios.Out.Write([]byte(p))
-			ios.Out.Write([]byte("\n"))
+			if _, err := ios.Out.Write([]byte(p + "\n")); err != nil {
+				return err
+			}
 		}
 	}
 

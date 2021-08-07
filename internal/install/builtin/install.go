@@ -32,14 +32,18 @@ func Install(ctx context.Context, host Host, ios IOs, args []string) error {
 	if len(fs.Args()) == 2 {
 		b := host.File(ctx, fs.Arg(0))
 
-		host.Move(ctx, fs.Arg(0), fs.Arg(1))
+		if err := host.Move(ctx, fs.Arg(0), fs.Arg(1)); err != nil {
+			return err
+		}
 
 		// TODO: awkward, but works with move semantics to dir.
 
 		o := host.Write(ctx, fs.Arg(0))
 		defer o.Close()
 
-		o.Write(b)
+		if _, err := o.Write(b); err != nil {
+			return err
+		}
 	}
 
 	// TODO: copy many files to directory

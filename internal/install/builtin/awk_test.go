@@ -31,11 +31,12 @@ func TestAwk(t *testing.T) {
 		Out: buf,
 	}
 
-	Awk(context.Background(), host, ios, []string{
+	err := Awk(context.Background(), host, ios, []string{
 		`-F[,:}]`,
 		// \042 is an octal escaped quote ". Its up to the program to interpret it.
 		"{for(i=1;i<=NF;i++){if($i~/tag_name\\042/){print $(i+1)}}}",
 	})
 
+	assert.NoError(t, err, "awk run should not error")
 	assert.Equal(t, "\"0.12.24\"\n", buf.String(), "json parse failed")
 }
