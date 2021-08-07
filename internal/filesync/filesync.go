@@ -1,3 +1,4 @@
+// Package filesync provides utilities to synchronize manifests with the file system.
 package filesync
 
 import (

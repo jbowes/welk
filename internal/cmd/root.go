@@ -8,4 +8,5 @@ var rootCmd = cobra.Command{
 	Short: "Manage and verify curl | sh style scripts",
 }
 
-func Execute() error { return rootCmd.Execute() }
+// TODO: handle err + panics here.
+func Execute() { _ = rootCmd.Execute() }

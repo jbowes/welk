@@ -94,13 +94,14 @@ type Txn struct {
 	commit func(t *Txn) error
 }
 
-func (t *Txn) Rollback() error {
+func (t *Txn) Rollback() {
 	if t.done {
-		return nil
+		return
 	}
 
 	t.m.State = t.fail
-	return t.writeManifest()
+	// TODO: panic instead?
+	_ = t.writeManifest()
 
 }
 
