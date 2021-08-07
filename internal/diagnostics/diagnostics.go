@@ -1,14 +1,17 @@
 package diagnostics
 
-import "runtime/debug"
-
-var (
-	version = "(devel)"
-	//buildDate = ""
-	// builtBy   = ""
+import (
+	"runtime"
+	"runtime/debug"
 )
 
-func Version() string {
+var (
+	version   = "(devel)"
+	buildDate = "unknown"
+	builtBy   = "unknown"
+)
+
+func getVersion() string {
 	// If the version was previously set here, or set with -ldflags -X, leave it be.
 	if version != "(devel)" {
 		return version
@@ -31,4 +34,29 @@ func Version() string {
 	}
 
 	return version
+}
+
+type Diagnostics struct {
+	Version   string
+	BuildDate string
+	BuiltBy   string
+
+	Goos   string
+	Goarch string
+	// TODO: include libc (eg muscl)
+
+	// TODO: Add Checks for path info
+
+	// TODO: Add go module information
+}
+
+func New() *Diagnostics {
+	return &Diagnostics{
+		Version:   getVersion(),
+		BuildDate: buildDate,
+		BuiltBy:   builtBy,
+
+		Goos:   runtime.GOOS,
+		Goarch: runtime.GOARCH,
+	}
 }
