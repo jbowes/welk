@@ -11,7 +11,7 @@ import (
 
 var (
 	version   = "(devel)"
-	buildDate = "unknown"
+	buildTime = "unknown"
 	builtBy   = "unknown"
 )
 
@@ -42,7 +42,7 @@ func getVersion() string {
 
 type Diagnostics struct {
 	Version   string
-	BuildDate string
+	BuildTime string
 	BuiltBy   string
 
 	Goos   string
@@ -57,7 +57,7 @@ type Diagnostics struct {
 func New() *Diagnostics {
 	return &Diagnostics{
 		Version:   getVersion(),
-		BuildDate: buildDate,
+		BuildTime: buildTime,
 		BuiltBy:   builtBy,
 
 		Goos:   runtime.GOOS,
