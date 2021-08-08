@@ -15,10 +15,10 @@ var (
 	builtBy   = "unknown"
 )
 
-func getVersion() string {
+func loadBuildInfo() {
 	// If the version was previously set here, or set with -ldflags -X, leave it be.
 	if version != "(devel)" {
-		return version
+		return
 	}
 
 	// See if we can get a version from module build info.
@@ -34,10 +34,10 @@ func getVersion() string {
 
 		if version == "(devel)" {
 			version = "unknown"
+		} else if builtBy == "unknown" {
+			builtBy = "go module"
 		}
 	}
-
-	return version
 }
 
 type Diagnostics struct {
@@ -55,8 +55,10 @@ type Diagnostics struct {
 }
 
 func New() *Diagnostics {
+	loadBuildInfo()
+
 	return &Diagnostics{
-		Version:   getVersion(),
+		Version:   version,
 		BuildTime: buildTime,
 		BuiltBy:   builtBy,
 
