@@ -78,7 +78,7 @@ We would love your help!
 [zsh]: https://www.zsh.org/
 [xdg]: https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
 
-[miletones]: ./milestones
+[milestones]: ./milestones
 [issues]: ./issues
 [bug]: ./issues/new?labels=bug
 [enhancement]: ./issues/new?labels=enhancement
