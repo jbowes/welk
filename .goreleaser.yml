@@ -1,5 +1,6 @@
 gomod:
-  proxy: true
+  # Enable when the repo is public
+  # proxy: true
 builds:
   - env:
       - CGO_ENABLED=0
