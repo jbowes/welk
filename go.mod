@@ -9,7 +9,6 @@ require (
 	github.com/charmbracelet/lipgloss v0.3.0
 	github.com/containerd/console v1.0.2 // indirect
 	github.com/creack/pty v1.1.14
-	github.com/cweill/gotests v1.6.1-0.20210327200037-07c9be90195c // indirect
 	github.com/google/uuid v1.3.0
 	github.com/muesli/reflow v0.3.0 // indirect
 	github.com/muesli/termenv v0.9.0 // indirect
