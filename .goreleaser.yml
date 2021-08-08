@@ -1,0 +1,33 @@
+gomod:
+  proxy: true
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    mod_timestamp: '{{ .CommitTimestamp }}'
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w -X github.com/jbowes/welk/internal/diagnostics.version={{ .Version }} -X github.com/jbowes/welk/internal/diagnostics.buildTime={{ .Date }} -X github.com/jbowes/welk/internal/diagnostics.builtBy=goreleaser
+archives:
+  - replacements:
+      darwin: Darwin
+      linux: Linux
+      windows: Windows
+      amd64: x86_64
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ incpatch .Tag }}-{{ slice .FullCommit 12 }}"
+release:
+  # Releases are created in draft form, and might be prereleases, for hand-tuning.
+  draft: true
+  prerelease: auto
+changelog:
+  sort: asc

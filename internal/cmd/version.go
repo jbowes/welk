@@ -29,7 +29,7 @@ var versionCmd = cobra.Command{
 		// TODO: colorize because that would be fun.
 		w := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', 0)
 		fmt.Fprintf(w, "%s:\t%s\n", "version", d.Version)
-		fmt.Fprintf(w, "%s:\t%s\n", "build date", d.BuildDate)
+		fmt.Fprintf(w, "%s:\t%s\n", "build time", d.BuildTime)
 		fmt.Fprintf(w, "%s:\t%s\n", "built by", d.BuiltBy)
 		w.Flush()
 		fmt.Fprintf(w, "%s:\t%s\n", "GOOS", d.Goos)
