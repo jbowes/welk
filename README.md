@@ -32,6 +32,10 @@ When documentation tells you to run `curl <some url> | /bin/sh`, use `welk`.
 
 ## Getting `welk`
 
+For now, head on over to the [releases](./releases) page and grab a binary.
+
+### Coming soon
+
 Use `curl | sh`, of course! Run:
 ```sh
 curl <TODO ADD FLAGS> <TODO URL> | sh
