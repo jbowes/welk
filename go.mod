@@ -10,14 +10,14 @@ require (
 	github.com/containerd/console v1.0.3 // indirect
 	github.com/creack/pty v1.1.14
 	github.com/google/uuid v1.3.0
-	github.com/jbowes/whatsnew v0.4.0
+	github.com/jbowes/whatsnew v0.5.2
 	github.com/muesli/reflow v0.3.0 // indirect
 	github.com/muesli/termenv v0.9.0 // indirect
 	github.com/rwtodd/Go.Sed v0.0.0-20190103233418-906bc69c9394
 	github.com/spf13/cobra v1.2.1
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.7.0
-	golang.org/x/mod v0.4.2
+	golang.org/x/mod v0.5.0
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 	golang.org/x/sys v0.0.0-20210809222454-d867a43fc93e
 	golang.org/x/term v0.0.0-20210615171337-6886f2dfbf5b
