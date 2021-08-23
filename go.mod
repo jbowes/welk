@@ -8,7 +8,7 @@ require (
 	github.com/charmbracelet/bubbletea v0.14.1
 	github.com/charmbracelet/lipgloss v0.3.0
 	github.com/containerd/console v1.0.3 // indirect
-	github.com/creack/pty v1.1.14
+	github.com/creack/pty v1.1.15
 	github.com/google/uuid v1.3.0
 	github.com/jbowes/whatsnew v0.5.2
 	github.com/muesli/reflow v0.3.0 // indirect
