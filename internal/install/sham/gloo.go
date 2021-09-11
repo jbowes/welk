@@ -10,8 +10,8 @@ import (
 	"fmt"
 	"sort"
 
+	"github.com/jbowes/semver"
 	"github.com/jbowes/welk/internal/install/builtin"
-	"golang.org/x/mod/semver"
 )
 
 const soloVersionParse = `python -c import sys; from distutils.version import LooseVersion; from json import loads as l; releases = l(sys.stdin.read()); releases = [release['tag_name'] for release in releases if not release['prerelease'] ];  releases.sort(key=LooseVersion, reverse=True); print('\n'.join(releases))`
@@ -35,7 +35,7 @@ func SoloVersionParse(ctx context.Context, host builtin.Host, ios builtin.IOs, a
 		return err
 	}
 
-	sort.Slice(rels, func(i, j int) bool { return semver.Compare(rels[i].TagName, rels[j].TagName) > 1 })
+	sort.Slice(rels, func(i, j int) bool { return verCmp(rels[i].TagName, rels[j].TagName) > 1 })
 
 	for i, r := range rels {
 		if !r.Prerelease {
@@ -51,6 +51,32 @@ func SoloVersionParse(ctx context.Context, host builtin.Host, ios builtin.IOs, a
 	}
 
 	return nil
+}
+
+// Compare two versions like go's x/mod/semver would. It's maybe a bit too much work with my semver.
+// Needs improvement.
+func verCmp(s1, s2 string) int {
+	v1, err1 := maybeV(s1)
+	v2, err2 := maybeV(s1)
+
+	switch {
+	case err1 != nil && err2 != nil:
+		return 0
+	case err1 != nil:
+		return -1
+	case err2 != nil:
+		return 1
+	default:
+		return v1.Compare(v2)
+	}
+}
+
+func maybeV(s string) (*semver.Version, error) {
+	if len(s) > 0 && s[0] == 'v' {
+		s = s[1:]
+	}
+
+	return semver.Parse(s)
 }
 
 func init() { Sham[soloVersionParse] = SoloVersionParse }
