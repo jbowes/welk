@@ -11,7 +11,7 @@ require (
 	github.com/creack/pty v1.1.15
 	github.com/google/uuid v1.3.0
 	github.com/jbowes/semver v0.1.0
-	github.com/jbowes/whatsnew v0.5.2
+	github.com/jbowes/whatsnew v0.6.2
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/muesli/reflow v0.3.0 // indirect
 	github.com/rwtodd/Go.Sed v0.0.0-20210816025313-55464686f9ef
@@ -33,5 +33,4 @@ require (
 	github.com/muesli/termenv v0.9.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
-	golang.org/x/mod v0.5.0 // indirect
 )
