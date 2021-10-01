@@ -50,8 +50,8 @@ github.com/benhoyt/goawk v1.8.1/go.mod h1:UKzPyqDh9O7HZ/ftnU33MYlAP2rPbXdwQ+OVlE
 github.com/bgentry/speakeasy v0.1.0/go.mod h1:+zsyZBPWlz7T6j88CTgSN5bM796AkVf0kBD4zp0CCIs=
 github.com/bketelsen/crypt v0.0.4/go.mod h1:aI6NrJ0pMGgvZKL1iVgXLnfIFJtfV+bKCoqOes/6LfM=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
-github.com/charmbracelet/bubbletea v0.15.0 h1:7++QPke7CsjBs+tZl49x7KXTHsof+NUMhreAtwBXygE=
-github.com/charmbracelet/bubbletea v0.15.0/go.mod h1:YTZSs2p3odhwYZdhqJheYHVUjU37c9OLgS85kw6NGQY=
+github.com/charmbracelet/bubbletea v0.16.0 h1:LAI0Rf6rPIiLYVamphgKYsLpPjkWRcxayzfmkbUkRqk=
+github.com/charmbracelet/bubbletea v0.16.0/go.mod h1:YTZSs2p3odhwYZdhqJheYHVUjU37c9OLgS85kw6NGQY=
 github.com/charmbracelet/lipgloss v0.4.0 h1:768h64EFkGUr8V5yAKV7/Ta0NiVceiPaV+PphaW1K9g=
 github.com/charmbracelet/lipgloss v0.4.0/go.mod h1:vmdkHvce7UzX6xkyf4cca8WlwdQ5RQr8fzta+xl7BOM=
 github.com/chzyer/logex v1.1.10/go.mod h1:+Ywpsq7O8HXn0nuIou7OrIPyXbp3wmkHB+jjWRnGsAI=
