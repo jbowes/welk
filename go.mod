@@ -10,7 +10,7 @@ require (
 	github.com/containerd/console v1.0.3 // indirect
 	github.com/creack/pty v1.1.16
 	github.com/google/uuid v1.3.0
-	github.com/jbowes/semver v0.1.2
+	github.com/jbowes/semver v0.1.3
 	github.com/jbowes/whatsnew v0.6.2
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/muesli/reflow v0.3.0 // indirect

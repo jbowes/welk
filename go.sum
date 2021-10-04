@@ -180,8 +180,8 @@ github.com/ianlancetaylor/demangle v0.0.0-20200824232613-28f6c0f3b639/go.mod h1:
 github.com/inconshreveable/mousetrap v1.0.0 h1:Z8tu5sraLXCXIcARxBp/8cbvlwVa7Z1NHg9XEKhtSvM=
 github.com/inconshreveable/mousetrap v1.0.0/go.mod h1:PxqpIevigyE2G7u3NXJIT2ANytuPF1OarO4DADm73n8=
 github.com/jbowes/semver v0.1.0/go.mod h1:cW7tPS9OrZDbYl1wdAx9k7KY4OQTL9BAJsOkAU4nR5Q=
-github.com/jbowes/semver v0.1.2 h1:SEXvs9cm5xLWDBN7e8lA6HoYQyJFnQqFPIjIYjqtezc=
-github.com/jbowes/semver v0.1.2/go.mod h1:cW7tPS9OrZDbYl1wdAx9k7KY4OQTL9BAJsOkAU4nR5Q=
+github.com/jbowes/semver v0.1.3 h1:C8X84mRFXxYyf5NF9njDtKjR2r0E5Uxagl852wZW7Zc=
+github.com/jbowes/semver v0.1.3/go.mod h1:cW7tPS9OrZDbYl1wdAx9k7KY4OQTL9BAJsOkAU4nR5Q=
 github.com/jbowes/whatsnew v0.6.2 h1:Nj7qdbkOCWBEp6aRZJqPhhJBavPxhrHhpaNc4zuf8FA=
 github.com/jbowes/whatsnew v0.6.2/go.mod h1:oDiX6C8Ln7TA9fYmT/O4MyyFoNzpkCkgyJPWA+gVZWk=
 github.com/json-iterator/go v1.1.11/go.mod h1:KdQUCv79m/52Kvf8AW2vK1V8akMuk1QjK/uOdHXbAo4=
