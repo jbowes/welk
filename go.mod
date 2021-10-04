@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/adrg/xdg v0.3.4
 	github.com/benhoyt/goawk v1.8.1
-	github.com/charmbracelet/bubbletea v0.16.0
+	github.com/charmbracelet/bubbletea v0.17.0
 	github.com/charmbracelet/lipgloss v0.4.0
 	github.com/containerd/console v1.0.3 // indirect
 	github.com/creack/pty v1.1.16
